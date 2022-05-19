@@ -33,10 +33,9 @@ export async function createRuby() {
   wasi.setMemory(instance.exports.memory as WebAssembly.Memory);
   // Manually call `_initialize`, which is a part of reactor model ABI,
   // because the WASI polyfill doesn't support it yet.
+  // @ts-ignore
   instance.exports._initialize();
   ruby.initialize();
 
   return ruby;
 }
-
-export const rubyVM = await createRuby();

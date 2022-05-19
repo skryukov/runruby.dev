@@ -1,15 +1,16 @@
 import pako from "pako";
 import path from "path-browserify";
+import { RubyVM } from "ruby-head-wasm-wasi";
+// @ts-ignore
 import untar from "js-untar";
 
 import { fsPathToLib, wasmFs, wasmPathToLib } from "./wasmfs";
-import { rubyVM } from "./wasm";
 
 // TODO:
 //  This is a hack to get around the fact that rubygems doesn't allow
 //  downloading gems from a browser due to lack of CORS headers
 const fetchGem = async (name: string, version: string) => {
-  const response = await fetch(`/${name}-${version}.gem`);
+  const response = await fetch(`${name}-${version}.gem`);
   if (!response.ok) {
     console.log("error", response);
     return null;
@@ -34,7 +35,7 @@ const unzipCode = async (buffer: ArrayBuffer, gemPath: string) => {
   });
 };
 
-export async function installGem(gemName: string, gemVersion: string) {
+export async function installGem(rubyVM: RubyVM, gemName: string, gemVersion: string) {
   const gemData = await fetchGem(gemName, gemVersion);
   if (!gemData) {
     return;
