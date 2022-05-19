@@ -6,6 +6,12 @@ import { wasiPreopens, wasmFs } from "./wasmfs";
 
 import wasmUrl from "ruby-head-wasm-wasi/dist/ruby+stdlib.wasm?url";
 
+const patchedWasiImport = {
+  // fixes 'Function not implemented' error on requiring gems from mounted FS
+  // see https://github.com/ruby/ruby.wasm/issues/17
+  fd_fdstat_set_flags: () => 0,
+};
+
 export async function createRuby() {
   // Next, create a new WASI instance with the correct options overridden from
   // the defaults.
@@ -17,7 +23,9 @@ export async function createRuby() {
   // Then, create a new Ruby VM instance that we can use to store the memory for
   // our application.
   const ruby = new RubyVM();
-  const imports = { wasi_snapshot_preview1: wasi.wasiImport };
+  const imports = {
+    wasi_snapshot_preview1: { ...wasi.wasiImport, ...patchedWasiImport },
+  };
   ruby.addToImports(imports);
 
   // Set the WASI memory to use the memory for our application.
