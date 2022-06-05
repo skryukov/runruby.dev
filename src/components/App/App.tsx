@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Editor from "@monaco-editor/react";
-import { RubyVM } from "ruby-head-wasm-wasi";
 
-import { createRuby } from "../../utils/wasm";
-import { installGem } from "../../utils/installGem";
+import { runWASI } from "../../engines/wasi";
+import { runEmscripten } from "../../engines/emscripten";
 
 const initialRubyCode = `# dry-initializer is downloaded and installed dynamically
 require 'dry-initializer'
@@ -23,22 +22,34 @@ user.name
 `;
 
 export default function App() {
-  const [rubyVM, setRubyVM] = useState<RubyVM | undefined>(undefined);
-  useEffect(() => {
-    const load = async () => {
-      const vm = await createRuby();
-      await installGem(vm, "dry-initializer", "3.1.1");
-      setRubyVM(vm);
-    };
-
-    load().catch(console.error);
-  }, [installGem, createRuby]);
-
-  const [state, setState] = useState(initialRubyCode);
+  const [loading, setLoading] = useState(true);
+  const [engine, setEngine] = useState("wasi");
+  const [code, setCode] = useState(initialRubyCode);
   const [result, setResult] = useState("Press run...");
+  const [stdLog, setStdLog] = useState<string[]>([]);
+  const [errLog, setErrLog] = useState<string[]>([]);
+
+  const runVM = () => {
+    setLoading(true);
+    setStdLog([]);
+    setErrLog([]);
+    setResult("");
+    const run = engine === "wasi" ? runWASI : runEmscripten;
+    const setStdout = (line: string) => {
+      console.log(line);
+      setStdLog((old) => [...old, line]);
+    };
+    const setStderr = (line: string) => {
+      console.warn(line);
+      setErrLog((old) => [...old, line]);
+    };
+    run({ code, setResult, setStdout, setStderr })
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  };
 
   const handleEditorChange = (value: string | undefined) => {
-    setState(value || "");
+    setCode(value || "");
   };
 
   return (
@@ -47,20 +58,30 @@ export default function App() {
         height="90vh"
         width="50%"
         defaultLanguage="ruby"
-        defaultValue={state}
+        defaultValue={code}
         onChange={handleEditorChange}
+        onMount={() => setLoading(false)}
+        options={{minimap: {enabled: false}}}
       />
 
-
       <div style={{ width: "50%", paddingLeft: "10px" }}>
-        <button
-          disabled={!rubyVM}
-          onClick={() => rubyVM && setResult(rubyVM.eval(state).toString())}
+        <select
+          value={engine}
+          onChange={(event) => setEngine(event.target.value)}
         >
+          <option value="wasi">WASI</option>
+          <option value="emscripten">Emscripten</option>
+        </select>
+        <button disabled={loading} onClick={() => !loading && runVM()}>
           Run
-        </button> {!rubyVM && " Ruby VM is loading..."}
+        </button>{" "}
+        {loading && "loading..."}
         <h5>Result:</h5>
-        {result}
+        <code>{result}</code>
+        <h5>Stdout:</h5>
+        <code>{stdLog}</code>
+        <h5>Stderr:</h5>
+        <code>{errLog}</code>
       </div>
     </div>
   );

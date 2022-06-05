@@ -17,7 +17,8 @@
     "path-browserify": "^1.0.1",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
-    "ruby-head-wasm-wasi": "0.3.0-2022-04-26-a"
+    "ruby-head-wasm-emscripten": "^0.1.0-2022-06-04-a",
+    "ruby-head-wasm-wasi": "0.3.0-2022-06-04-a"
   },
   "devDependencies": {
     "@types/pako": "^1.0.3",

@@ -2,9 +2,11 @@ import path from "path-browserify";
 import { WASI } from "@wasmer/wasi";
 import { RubyVM } from "ruby-head-wasm-wasi";
 
-import { wasiPreopens, wasmFs } from "./wasmfs";
+import { patchWriter, wasiPreopens, wasmFs } from "./wasmfs";
 
 import wasmUrl from "ruby-head-wasm-wasi/dist/ruby+stdlib.wasm?url";
+import { installGem } from "./installGem";
+import { TRunParams, TSetString } from "../types";
 
 const patchedWasiImport = {
   // fixes 'Function not implemented' error on requiring gems from mounted FS
@@ -12,7 +14,10 @@ const patchedWasiImport = {
   fd_fdstat_set_flags: () => 0,
 };
 
-export async function createRuby() {
+let rubyModule: ArrayBuffer;
+
+async function createRuby(setStdout: TSetString, setStderr: TSetString) {
+  patchWriter(wasmFs.fs, setStdout, setStderr);
   // Next, create a new WASI instance with the correct options overridden from
   // the defaults.
   const wasi = new WASI({
@@ -29,8 +34,9 @@ export async function createRuby() {
   ruby.addToImports(imports);
 
   // Set the WASI memory to use the memory for our application.
-  // const instance = await wasmInit(imports);
-  const rubyModule = await (await fetch(wasmUrl)).arrayBuffer();
+  if (rubyModule === undefined) {
+    rubyModule = await (await fetch(wasmUrl)).arrayBuffer();
+  }
   const result = await WebAssembly.instantiate(rubyModule, imports);
   const instance = result.instance;
 
@@ -43,7 +49,15 @@ export async function createRuby() {
   // because the WASI polyfill doesn't support it yet.
   // @ts-ignore
   instance.exports._initialize();
-  ruby.initialize();
+  await ruby.initialize(["ruby.wasm", "-e_=0"]);
 
   return ruby;
 }
+
+export const run = async (params: TRunParams) => {
+  const { code, setResult, setStdout, setStderr } = params;
+  const vm = await createRuby(setStdout, setStderr);
+  await installGem(vm, "dry-initializer", "3.1.1");
+
+  setResult(vm.eval(code).toString());
+};

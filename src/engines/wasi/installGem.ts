@@ -1,10 +1,9 @@
 import pako from "pako";
-import path from "path-browserify";
 import { RubyVM } from "ruby-head-wasm-wasi";
 // @ts-ignore
 import untar from "js-untar";
 
-import { fsPathToLib, wasmFs, wasmPathToLib } from "./wasmfs";
+import { gemAlreadyExists, wasmPathToLib, writeGemFile } from "./wasmfs";
 
 // TODO:
 //  This is a hack to get around the fact that rubygems doesn't allow
@@ -28,18 +27,22 @@ const unzipCode = async (buffer: ArrayBuffer, gemPath: string) => {
   const dataFiles = await untar(dataTar);
   dataFiles.forEach((file: any) => {
     const filePath = `${gemPath}/${file.name}`;
-    wasmFs.fs.mkdirpSync(path.dirname(filePath), 0o777);
-    wasmFs.fs.writeFileSync(filePath, new Uint8Array(file.buffer), {
-      mode: 0o777,
-    });
+    writeGemFile(filePath, file.buffer);
   });
 };
 
-export async function installGem(rubyVM: RubyVM, gemName: string, gemVersion: string) {
-  const gemData = await fetchGem(gemName, gemVersion);
-  if (!gemData) {
-    return;
+export async function installGem(
+  rubyVM: RubyVM,
+  gemName: string,
+  gemVersion: string
+) {
+  const gemPath = `${gemName}-${gemVersion}`;
+  if (!gemAlreadyExists(gemPath)) {
+    const gemData = await fetchGem(gemName, gemVersion);
+    if (!gemData) {
+      return;
+    }
+    await unzipCode(gemData, gemPath);
   }
-  await unzipCode(gemData, `${fsPathToLib}/${gemName}-${gemVersion}`);
-  rubyVM.eval(`$LOAD_PATH << '${wasmPathToLib}/${gemName}-${gemVersion}/lib'`);
+  rubyVM.eval(`$LOAD_PATH << '${wasmPathToLib}/${gemPath}/lib'`);
 }
