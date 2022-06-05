@@ -1,3 +1,4 @@
+// @ts-ignore
 import { loadRuby } from "ruby-head-wasm-emscripten";
 import rubyWasm from "ruby-head-wasm-emscripten/dist/ruby.wasm?url";
 import rubyStdlib from "ruby-head-wasm-emscripten/dist/ruby_stdlib.data?url";
