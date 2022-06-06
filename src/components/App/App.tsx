@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 
 import { runWASI } from "../../engines/wasi";
@@ -22,8 +22,10 @@ user.name
 `;
 
 export default function App() {
+  const currentUrlParams = new URLSearchParams(window.location.search);
+  const eng = currentUrlParams.get("engine") === "emscripten" ? "emscripten" : "wasi";
+  const [engine, setEngine] = useState(eng);
   const [loading, setLoading] = useState(true);
-  const [engine, setEngine] = useState("wasi");
   const [code, setCode] = useState(initialRubyCode);
   const [result, setResult] = useState("Press run...");
   const [stdLog, setStdLog] = useState<string[]>([]);
@@ -52,6 +54,12 @@ export default function App() {
     setCode(value || "");
   };
 
+  useEffect(() => {
+    const url = new URL(window.location.toString());
+    url.searchParams.set('engine', engine);
+    window.history.pushState({}, '', url);
+  }, [engine]);
+
   return (
     <div style={{ display: "flex", padding: "10px" }}>
       <Editor
@@ -67,6 +75,7 @@ export default function App() {
       <div style={{ width: "50%", paddingLeft: "10px" }}>
         <select
           value={engine}
+          disabled={loading}
           onChange={(event) => setEngine(event.target.value)}
         >
           <option value="wasi">WASI</option>
