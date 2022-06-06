@@ -20,8 +20,8 @@ export const run = async (params: TRunParams) => {
       }
     },
     setStatus: setResult,
-    print: setStdout,
-    printErr: setStderr,
+    print: (line: string) => setStdout(line + "\n"),
+    printErr: (line: string) => setStderr(line + "\n"),
     arguments: args,
   };
   await loadRuby(defaultModule);
