@@ -6,7 +6,7 @@ import { TRunParams } from "../types";
 
 export const run = async (params: TRunParams) => {
   const { code, setResult, setStdout, setStderr } = params;
-  const args = ["-r", "rubygems", "-e", code];
+  const args = ["-e", code, ""];
 
   const defaultModule = {
     locateFile: (path: string) => {
