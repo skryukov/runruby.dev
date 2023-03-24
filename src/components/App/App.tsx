@@ -1,42 +1,26 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Editor from "@monaco-editor/react";
 
 import { runWASI } from "../../engines/wasi";
-import { runEmscripten } from "../../engines/emscripten";
 
-const initialRubyCode = `# dry-initializer is downloaded and installed dynamically
-require 'dry-initializer'
+const initialRubyCode = `require "uri/idna"
 
-class User
-  extend Dry::Initializer
-
-  param  :name,  proc(&:to_s)
-  param  :role,  default: proc { 'customer' }
-  option :admin, default: proc { false }
-  option :phone, optional: true
-end
-
-user = User.new 'Vladimir', 'admin', admin: true
-
-user.name
+URI::IDNA.register(alabel: "xn--gdkl8fhk5egc.jp", ulabel: "ハロー・ワールド.jp")
 `;
 
 export default function App() {
-  const currentUrlParams = new URLSearchParams(window.location.search);
-  const eng = currentUrlParams.get("engine") === "emscripten" ? "emscripten" : "wasi";
-  const [engine, setEngine] = useState(eng);
+  const [gem, setGem] = useState("uri-idna");
   const [loading, setLoading] = useState(true);
   const [code, setCode] = useState(initialRubyCode);
   const [result, setResult] = useState("Press run...");
   const [stdLog, setStdLog] = useState<string[]>([]);
   const [errLog, setErrLog] = useState<string[]>([]);
 
-  const runVM = () => {
+  const runVM = (executeCode?: string) => {
     setLoading(true);
     setStdLog([]);
     setErrLog([]);
     setResult("");
-    const run = engine === "wasi" ? runWASI : runEmscripten;
     const setStdout = (line: string) => {
       console.log(line);
       setStdLog((old) => [...old, line]);
@@ -45,20 +29,18 @@ export default function App() {
       console.warn(line);
       setErrLog((old) => [...old, line]);
     };
-    run({ code, setResult, setStdout, setStderr })
+    runWASI({code: (executeCode || code), setResult, setStdout, setStderr })
       .catch(console.error)
       .finally(() => setLoading(false));
   };
 
+  const installGem = () => {
+    runVM(`Gem::Commands::InstallCommand.new.install_gem("${gem}", nil)`)
+  }
+
   const handleEditorChange = (value: string | undefined) => {
     setCode(value || "");
   };
-
-  useEffect(() => {
-    const url = new URL(window.location.toString());
-    url.searchParams.set('engine', engine);
-    window.history.pushState({}, '', url);
-  }, [engine]);
 
   return (
     <div style={{ display: "flex", padding: "10px" }}>
@@ -73,14 +55,15 @@ export default function App() {
       />
 
       <div style={{ width: "50%", paddingLeft: "10px" }}>
-        <select
-          value={engine}
+        <input
+          value={gem}
           disabled={loading}
-          onChange={(event) => setEngine(event.target.value)}
-        >
-          <option value="wasi">WASI</option>
-          <option value="emscripten">Emscripten</option>
-        </select>
+          onChange={(event) => setGem(event.target.value)}
+        />
+        <button disabled={loading} onClick={() => !loading && installGem()}>
+          Install gem
+        </button>{" "}
+
         <button disabled={loading} onClick={() => !loading && runVM()}>
           Run
         </button>{" "}
