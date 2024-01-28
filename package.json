@@ -9,25 +9,25 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@bjorn3/browser_wasi_shim": "^0.2.19",
     "@monaco-editor/react": "^4.4.4",
-    "@wasmer/wasi": "^0.12.0",
-    "@wasmer/wasmfs": "^0.12.0",
+    "@ruby/3.3-wasm-wasi": "^2.4.1",
+    "@ruby/head-wasm-emscripten": "^2.4.1",
+    "@ruby/wasm-wasi": "^2.4.1",
     "js-untar": "^2.0.0",
     "pako": "^2.0.4",
     "path-browserify": "^1.0.1",
-    "react": "^18.0.0",
-    "react-dom": "^18.0.0",
-    "ruby-head-wasm-emscripten": "0.1.0-2022-06-04-a",
-    "ruby-head-wasm-wasi": "0.3.0-2022-06-04-a"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/pako": "^1.0.3",
+    "@types/pako": "^2.0.3",
     "@types/path-browserify": "^1.0.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
-    "@vitejs/plugin-react": "^1.3.0",
-    "prettier": "2.6.2",
-    "typescript": "^4.6.3",
-    "vite": "^2.9.5"
+    "@types/react": "^18.2.47",
+    "@types/react-dom": "^18.2.18",
+    "@vitejs/plugin-react": "^4.2.1",
+    "prettier": "^3.2.4",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.12"
   }
 }
