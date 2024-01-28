@@ -89,6 +89,15 @@
     padding-bottom: 4px;
 }
 
+.menuSpinner {
+    fill: #f1f1f1;
+    width: 16px;
+    height: 16px;
+    margin-left: 8px;
+    display: inline-block;
+    vertical-align: middle;
+}
+
 .editor {
     grid-area: editor;
     display: flex;
@@ -159,4 +168,8 @@
 
 .runButton:hover {
     background-color: #2E7D32;
+}
+
+.runButtonDisabled {
+    background-color: #424242;
 }

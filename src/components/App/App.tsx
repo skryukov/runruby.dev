@@ -3,8 +3,14 @@ import Editor from "@monaco-editor/react";
 
 import { runWASI } from "../../engines/wasi";
 import cs from "./styles.module.css";
+import { RbValue } from "@ruby/wasm-wasi";
+import SvgSpinner from "./spinner.svg?react";
 
-const initialRubyCode = `require "uri-idna"
+const initialRubyCode = `# This is a Ruby WASI playground
+# You can run any Ruby code here and see the result
+# You can also install gems and use them in your code (unless they use native extensions)
+# For example, try installing the URI::IDNA gem and using it in your code:  
+require "uri-idna"
 
 URI::IDNA.register(alabel: "xn--gdkl8fhk5egc.jp", ulabel: "ハロー・ワールド.jp")
 `;
@@ -16,9 +22,10 @@ export default function App() {
   const [result, setResult] = useState("Press run...");
   const [log, setLog] = useState<string[]>([]);
   const [editorValueSource, setEditorValueSource] = useState<"result" | "logs">("result");
-  const [installedGems, setInstalledGems] = useState<string[]>([]);
+  // object of gems and their versions as values
+  const [installedGems, setInstalledGems] = useState<{ [key: string]: string|null }>({});
 
-  const runVM = (executeCode?: string, onSuccess?: Function, onError?: Function ) => {
+  const runVM = (executeCode?: string, onSuccess?: (result: RbValue) => void, onError?: Function) => {
     setLoading(true);
     setLog([]);
     setResult("");
@@ -30,26 +37,37 @@ export default function App() {
       console.warn(line);
       setLog((old) => [...old, `[error] ${line}`]);
     };
-    runWASI({ code: (executeCode || code), setResult, setStdout, setStderr })
-      .catch((err) => {
-        setLog((old) => [...old, `[error] ${err}`]);
-        setEditorValueSource("logs");
-        onError && onError(err);
-      })
-      .then(() => {
-        setEditorValueSource("result");
-        onSuccess && onSuccess();
-      })
-      .finally(() => setLoading(false));
+    // setTimeout is needed to allow the loading status to render
+    setTimeout(() =>
+      runWASI({ code: (executeCode || code), setResult, setStdout, setStderr })
+        .then((result) => {
+          setEditorValueSource("result");
+          onSuccess && onSuccess(result);
+        })
+        .catch((err) => {
+          setLog((old) => [...old, `[error] ${err}`]);
+          setEditorValueSource("logs");
+          onError && onError(err);
+        })
+        .finally(() => setLoading(false))
+    ,20);
   };
 
   const installGem = () => {
     if (!gem) {
       return;
     }
+    setInstalledGems((old) => ({ ...old, [gem]: null }));
     runVM(
-      `Gem::Commands::InstallCommand.new.install_gem("${gem}", nil)`,
-      () => setInstalledGems((old) => [...old, gem]),
+      `a = Gem::Commands::InstallCommand.new; a.install_gem("${gem}", nil); a.installed_specs.map { [_1.name, _1.version.to_s] }.to_h`,
+      (result) => {
+        const version = result.toJS()[gem];
+        setInstalledGems((old) => ({ ...old, [gem]: version }));
+      },
+      () => setInstalledGems((old) => {
+        const { [gem]: _, ...rest } = old;
+        return rest;
+      })
     );
     setGem("");
   };
@@ -81,9 +99,11 @@ export default function App() {
           </button>
         </div>
         <div className={cs.menuDependencies}>
-          {installedGems.map((gem) => (
+          {Object.keys(installedGems).map((gem) => (
             <div className={cs.menuDependency} key={gem}>
-              {gem}
+              {gem} {installedGems[gem] ? `(${installedGems[gem]})` : (
+              <SvgSpinner className={cs.menuSpinner}/>
+            )}
             </div>
           ))}
         </div>
@@ -99,14 +119,19 @@ export default function App() {
             defaultValue={code}
             onChange={handleEditorChange}
             onMount={() => setLoading(false)}
-            options={{ wordWrap: "on", minimap: { enabled: false }, overviewRulerBorder: false }}
+            options={{
+              wordWrap: "on",
+              minimap: { enabled: false },
+              overviewRulerBorder: false,
+              hideCursorInOverviewRuler: true
+            }}
           />
         </div>
         <div className={cs.editorFooter}>
           <div className={cs.editorLoading}>
             {loading && "loading..."}
           </div>
-          <button className={cs.runButton} disabled={loading} onClick={() => !loading && runVM()}>
+          <button className={`${cs.runButton} ${loading ? cs.runButtonDisabled : ''}`} disabled={loading} onClick={() => !loading && runVM()}>
             Run code
           </button>
         </div>
@@ -130,7 +155,15 @@ export default function App() {
             theme="vs-dark"
             value={editorValueSource === "result" ? result : log.join("\n")}
             language="shell"
-            options={{wordWrap: "on", lineNumbers: "off", readOnly: true, minimap: { enabled: false }, overviewRulerBorder: false, renderLineHighlight: "none" }}
+            options={{
+              wordWrap: "on",
+              lineNumbers: "off",
+              readOnly: true,
+              minimap: { enabled: false },
+              overviewRulerBorder: false,
+              renderLineHighlight: "none",
+              hideCursorInOverviewRuler: true
+            }}
           />
         </div>
       </div>

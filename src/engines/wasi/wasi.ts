@@ -2,6 +2,9 @@ import { RubyVM } from "@ruby/wasm-wasi";
 import { Fd, PreopenDirectory, File, WASI, OpenFile, ConsoleStdout, Directory } from "@bjorn3/browser_wasi_shim";
 
 import wasmUrl from "@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm?url";
+
+const wasmModulePromise = fetch(wasmUrl).then((response) => WebAssembly.compileStreaming(response));
+
 import { TRunParams, TSetString } from "../types";
 
 import socketrb from "./../../stubs/socket.rb?url";
@@ -16,13 +19,15 @@ export const wasmPathToLib = "/usr/local/lib/ruby_gems";
 export const gemdir = new PreopenDirectory(wasmPathToLib, {})
 
 async function createRuby(setStdout: TSetString, setStderr: TSetString) {
-  gemdir.dir.contents = {
-    "socket.rb": new File(await (await fetch(socketrb)).arrayBuffer()),
+  if (Object.values(gemdir.dir.contents).length === 0) {
+    gemdir.dir.contents = {
+      "socket.rb": new File(await (await fetch(socketrb)).arrayBuffer()),
       "thread_stub.rb": new File(await (await fetch(threadrb)).arrayBuffer()),
       "rubygems_stub.rb": new File(await (await fetch(rubygemsrb)).arrayBuffer()),
       "io": new Directory({
-      "wait.rb": new File(await (await fetch(iowaitrb)).arrayBuffer()),
-    })
+        "wait.rb": new File(await (await fetch(iowaitrb)).arrayBuffer()),
+      })
+    }
   }
 
   const fds: Fd[] = [
@@ -42,7 +47,7 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   };
   ruby.addToImports(imports);
 
-  const { instance } = await WebAssembly.instantiateStreaming(await fetch(wasmUrl), imports);
+  const instance = await WebAssembly.instantiate(await wasmModulePromise, imports);
   await ruby.setInstance(instance);
 
   wasi.initialize(instance as any);
@@ -51,14 +56,11 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   return ruby;
 }
 
-let vm: RubyVM;
-
 export const run = async (params: TRunParams) => {
   const { code, setResult, setStdout, setStderr } = params;
-  if (vm === undefined) {
-    vm = await createRuby(setStdout, setStderr);
-  }
-
-  const result = await vm.evalAsync(code)
-  setResult(result.toString());
+  const vm = await createRuby(setStdout, setStderr);
+  const jsResult = await vm.evalAsync(code)
+  const result = jsResult.toString()
+  setResult(result);
+  return jsResult;
 };
