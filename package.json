@@ -12,9 +12,8 @@
   "dependencies": {
     "@bjorn3/browser_wasi_shim": "^0.2.19",
     "@monaco-editor/react": "^4.4.4",
-    "@ruby/3.3-wasm-wasi": "^2.4.1",
-    "@ruby/head-wasm-emscripten": "^2.4.1",
-    "@ruby/wasm-wasi": "^2.4.1",
+    "@ruby/3.3-wasm-wasi": "^2.5.0",
+    "@ruby/wasm-wasi": "^2.5.0",
     "js-untar": "^2.0.0",
     "pako": "^2.0.4",
     "path-browserify": "^1.0.1",
