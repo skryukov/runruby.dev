@@ -1,0 +1,162 @@
+.container {
+    display: grid;
+    grid-template-rows: 56px 1fr;
+    grid-template-columns: 0.75fr 1fr 1fr 1.5fr;
+    grid-template-areas:
+    "header header header header"
+    "menu editor editor output";
+    background-color: #1a1a1a;
+    height: 100vh;
+    width: 100%;
+}
+
+.header {
+    grid-area: header;
+    max-height: 60px;
+}
+
+.title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #f1f1f1;
+    padding: 8px 16px;
+}
+
+.editorFooter {
+    padding: 16px 16px 0;
+    margin-top: 8px;
+    text-align: right;
+    border-top: 0.5px #ffffff14 solid;
+}
+
+.editorLoading {
+    padding: 0 16px;
+    display: inline-block;
+}
+
+.menu {
+    grid-area: menu;
+    padding: 16px 8px;
+}
+
+.menuLabel {
+    font-size: 14px;
+    font-weight: bold;
+    color: #f1f1f1;
+    padding: 8px 8px 16px;
+    display: block;
+}
+
+.menuInputButton {
+    white-space: nowrap;
+}
+
+.menuInput {
+    background-color: transparent;
+    color: #f1f1f1;
+    padding: 8px 50px 8px 16px;
+    text-align: left;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-bottom: 8px;
+    border: 1px solid #ffffff14;
+    border-radius: 8px;
+}
+
+.menuInstallButton {
+    transform: translateX(-100%);
+    background-color: #388E3C;
+    border: none;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+    margin-top: 8px;
+}
+
+.menuDependencies {
+    padding-left: 16px;
+}
+
+.menuDependency {
+    padding-bottom: 4px;
+}
+
+.editor {
+    grid-area: editor;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    background-color: #1e1e1e;
+    padding: 16px 0px;
+    margin: 0 4px;
+}
+
+.editorText {
+    padding: 0 8px;
+    flex: 1;
+}
+
+.output {
+    grid-area: output;
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 16px 8px;
+    margin: 0 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+.switchButtons {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    padding: 0 16px 8px;
+}
+
+.switchButton {
+    background-color: #1e1e1e;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 8px;
+}
+
+.switchButton:hover {
+    background-color: #424242;
+}
+
+.switchButtonActive {
+    background-color: #424242;
+}
+
+.runButton {
+    background-color: #388E3C;
+    border: none;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.runButton:hover {
+    background-color: #2E7D32;
+}
