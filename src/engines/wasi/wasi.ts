@@ -3,7 +3,6 @@ import { Fd, PreopenDirectory, File, WASI, OpenFile, ConsoleStdout, Directory } 
 
 import wasmUrl from "@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm?url";
 import { TRunParams, TSetString } from "../types";
-let rubyModule: WebAssembly.Module;
 
 import socketrb from "./../../stubs/socket.rb?url";
 import threadrb from "./../../stubs/thread_stub.rb?url";
@@ -14,16 +13,17 @@ export const workdir = new PreopenDirectory(".", {});
 
 export const wasmPathToLib = "/usr/local/lib/ruby_gems";
 
-export const gemdir = new PreopenDirectory(wasmPathToLib, {
-  "socket.rb": new File(await (await fetch(socketrb)).arrayBuffer()),
-  "thread_stub.rb": new File(await (await fetch(threadrb)).arrayBuffer()),
-  "rubygems_stub.rb": new File(await (await fetch(rubygemsrb)).arrayBuffer()),
-  "io": new Directory({
-    "wait.rb": new File(await (await fetch(iowaitrb)).arrayBuffer()),
-  })
-})
+export const gemdir = new PreopenDirectory(wasmPathToLib, {})
 
 async function createRuby(setStdout: TSetString, setStderr: TSetString) {
+  gemdir.dir.contents = {
+    "socket.rb": new File(await (await fetch(socketrb)).arrayBuffer()),
+      "thread_stub.rb": new File(await (await fetch(threadrb)).arrayBuffer()),
+      "rubygems_stub.rb": new File(await (await fetch(rubygemsrb)).arrayBuffer()),
+      "io": new Directory({
+      "wait.rb": new File(await (await fetch(iowaitrb)).arrayBuffer()),
+    })
+  }
 
   const fds: Fd[] = [
     new OpenFile(new File([])), // stdin
@@ -42,10 +42,7 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   };
   ruby.addToImports(imports);
 
-  if (rubyModule === undefined) {
-    rubyModule = await (await fetch(wasmUrl)).arrayBuffer();
-  }
-  const {instance} = await WebAssembly.instantiate(rubyModule, imports);
+  const { instance } = await WebAssembly.instantiateStreaming(await fetch(wasmUrl), imports);
   await ruby.setInstance(instance);
 
   wasi.initialize(instance as any);
@@ -54,9 +51,13 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   return ruby;
 }
 
+let vm: RubyVM;
+
 export const run = async (params: TRunParams) => {
   const { code, setResult, setStdout, setStderr } = params;
-  const vm = await createRuby(setStdout, setStderr);
+  if (vm === undefined) {
+    vm = await createRuby(setStdout, setStderr);
+  }
 
   const result = await vm.evalAsync(code)
   setResult(result.toString());
