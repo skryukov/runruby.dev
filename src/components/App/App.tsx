@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 
-import { runWASI } from "../../engines/wasi";
 import cs from "./styles.module.css";
 import { RbValue } from "@ruby/wasm-wasi";
 import SvgSpinner from "./spinner.svg?react";
+import VMWorker from '../../worker?worker'
+
+const vmWorker = new VMWorker();
 
 const initialRubyCode = `# This is a Ruby WASI playground
 # You can run any Ruby code here and see the result
@@ -37,38 +39,60 @@ export default function App() {
       console.warn(line);
       setLog((old) => [...old, `[error] ${line}`]);
     };
-    // setTimeout is needed to allow the loading status to render
-    setTimeout(() =>
-      runWASI({ code: (executeCode || code), setResult, setStdout, setStderr })
-        .then((result) => {
-          setEditorValueSource("result");
-          onSuccess && onSuccess(result);
-        })
-        .catch((err) => {
-          setLog((old) => [...old, `[error] ${err}`]);
-          setEditorValueSource("logs");
-          onError && onError(err);
-        })
-        .finally(() => setLoading(false))
-    ,20);
+
+    vmWorker.postMessage({type: 'runCode', code: (executeCode || code)});
+    console.log('code:')
+    vmWorker.onmessage = (event) => {
+      const {type, data} = event.data;
+      if (type === 'stdout') {
+        setStdout(data);
+      } else if (type === 'stderr') {
+        setStderr(data);
+      } else if (type === 'result') {
+        setResult(data);
+        setEditorValueSource("result");
+        onSuccess && onSuccess(data);
+        setLoading(false)
+      } else if (type === 'error') {
+        setLog((old) => [...old, `[error] ${data}`]);
+        setEditorValueSource("logs");
+        onError && onError(data);
+        setLoading(false)
+      }
+    }
   };
 
   const installGem = () => {
     if (!gem) {
       return;
     }
+    const setStdout = (line: string) => {
+      console.log(line);
+      setLog((old) => [...old, line]);
+    };
+    const setStderr = (line: string) => {
+      console.warn(line);
+      setLog((old) => [...old, `[error] ${line}`]);
+    };
     setInstalledGems((old) => ({ ...old, [gem]: null }));
-    runVM(
-      `a = Gem::Commands::InstallCommand.new; a.install_gem("${gem}", nil); a.installed_specs.map { [_1.name, _1.version.to_s] }.to_h`,
-      (result) => {
-        const version = result.toJS()[gem];
-        setInstalledGems((old) => ({ ...old, [gem]: version }));
-      },
-      () => setInstalledGems((old) => {
-        const { [gem]: _, ...rest } = old;
-        return rest;
-      })
-    );
+    vmWorker.postMessage({type: 'installGem', gem});
+    vmWorker.onmessage = (event) => {
+      console.log('event:', event)
+      const {type, data} = event.data;
+      if (type === 'stdout') {
+        setStdout(data);
+      } else if (type === 'stderr') {
+        setStderr(data);
+      } else if (type === 'installed') {
+        setInstalledGems((old) => ({ ...old, [gem]: data.version }));
+      } else if (type === 'error') {
+        setInstalledGems((old) => {
+          const { [gem]: _, ...rest } = old;
+          return rest;
+        });
+        setLoading(false)
+      }
+    }
     setGem("");
   };
 
