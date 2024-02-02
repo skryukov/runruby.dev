@@ -1,34 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 
 import { runWASI } from "../../engines/wasi";
 import cs from "./styles.module.css";
 import { RbValue } from "@ruby/wasm-wasi";
-import SvgSpinner from "./spinner.svg?react";
-
-const initialRubyCode = `# This is a Ruby WASI playground
-# You can run any Ruby code here and see the result
-# You can also install gems and use them in your code (unless they use native extensions)
-# For example, try installing the URI::IDNA gem and using it in your code:  
-require "uri-idna"
-
-URI::IDNA.register(alabel: "xn--gdkl8fhk5egc.jp", ulabel: "ハロー・ワールド.jp")
-`;
+import { File, Directory } from "@bjorn3/browser_wasi_shim";
+import { decode, encode, workDir } from "../../engines/wasi/editorFS.ts";
 
 export default function App() {
-  const [gem, setGem] = useState("");
   const [loading, setLoading] = useState(true);
-  const [code, setCode] = useState(initialRubyCode);
+  // TODO: get first file from workDir
+  const [code, setCode] = useState(decode((workDir.dir.contents["main.rb"] as File).data));
   const [result, setResult] = useState("Press run...");
   const [log, setLog] = useState<string[]>([]);
   const [editorValueSource, setEditorValueSource] = useState<"result" | "logs">("result");
   // object of gems and their versions as values
-  const [installedGems, setInstalledGems] = useState<{ [key: string]: string|null }>({});
+  const [currentFile, setCurrentFile] = useState<File>(workDir.dir.contents["main.rb"] as File);
 
-  const runVM = (executeCode?: string, onSuccess?: (result: RbValue) => void, onError?: Function) => {
+  const runVM = (code: string, onSuccess?: (result: RbValue) => void, onError?: Function) => {
     setLoading(true);
     setLog([]);
     setResult("");
+    setEditorValueSource("logs");
     const setStdout = (line: string) => {
       console.log(line);
       setLog((old) => [...old, line]);
@@ -39,42 +32,41 @@ export default function App() {
     };
     // setTimeout is needed to allow the loading status to render
     setTimeout(() =>
-      runWASI({ code: (executeCode || code), setResult, setStdout, setStderr })
-        .then((result) => {
-          setEditorValueSource("result");
-          onSuccess && onSuccess(result);
-        })
-        .catch((err) => {
-          setLog((old) => [...old, `[error] ${err}`]);
-          setEditorValueSource("logs");
-          onError && onError(err);
-        })
-        .finally(() => setLoading(false))
-    ,20);
+        runWASI({ code, setResult, setStdout, setStderr })
+          .then((result) => {
+            setEditorValueSource("result");
+            onSuccess && onSuccess(result);
+          })
+          .catch((err) => {
+            setLog((old) => [...old, `[error] ${err}`]);
+            setEditorValueSource("logs");
+            onError && onError(err);
+          })
+          .finally(() => setLoading(false))
+      , 20);
   };
 
-  const installGem = () => {
-    if (!gem) {
-      return;
-    }
-    setInstalledGems((old) => ({ ...old, [gem]: null }));
-    runVM(
-      `a = Gem::Commands::InstallCommand.new; a.install_gem("${gem}", nil); a.installed_specs.map { [_1.name, _1.version.to_s] }.to_h`,
-      (result) => {
-        const version = result.toJS()[gem];
-        setInstalledGems((old) => ({ ...old, [gem]: version }));
-      },
-      () => setInstalledGems((old) => {
-        const { [gem]: _, ...rest } = old;
-        return rest;
-      })
-    );
-    setGem("");
+  const runCode = () => {
+    runVM(`require "bundler/setup";${code}`)
   };
+  const bundleInstall = () => {
+    runVM(`require "bundler/cli";require "bundler/cli/install";Bundler::CLI::Install.new({path: './gems'}).run`,
+      () => {
+        setResult("Bundle install successful (see logs for details)")
+      },
+      () => {
+        setResult("Bundle install failed (see logs for details)")
+      }
+    );
+  }
 
   const handleEditorChange = (value: string | undefined) => {
     setCode(value || "");
   };
+
+  useEffect(() => {
+    currentFile.data = encode(code);
+  }, [code])
 
   return (
     <div className={cs.container}>
@@ -83,27 +75,21 @@ export default function App() {
       </div>
       <div className={cs.menu}>
         <label className={cs.menuLabel}>
-          Dependencies
+          Files
         </label>
-        <div className={cs.menuInputButton}>
-          <input
-            className={cs.menuInput}
-            onKeyDown={(event) => event.key === "Enter" && !loading && installGem()}
-            value={gem}
-            placeholder="Enter gem to install"
-            disabled={loading}
-            onChange={(event) => setGem(event.target.value)}
-          />
-          <button className={cs.menuInstallButton} disabled={loading} onClick={() => !loading && installGem()}>
-            +
-          </button>
-        </div>
-        <div className={cs.menuDependencies}>
-          {Object.keys(installedGems).map((gem) => (
-            <div className={cs.menuDependency} key={gem}>
-              {gem} {installedGems[gem] ? `(${installedGems[gem]})` : (
-              <SvgSpinner className={cs.menuSpinner}/>
-            )}
+
+        <div className={cs.menuFiles}>
+          {Object.keys(workDir.dir.contents).map((file) => (
+            <div className={`${cs.menuFile} ${currentFile === workDir.dir.contents[file] ? cs.menuFileActive : ''}`} key={file} onClick={() => {
+              const fileOrDir = workDir.dir.contents[file];
+              if (fileOrDir instanceof Directory) {
+                //
+              } else if (fileOrDir instanceof File) {
+                setCurrentFile(fileOrDir);
+                setCode(decode(fileOrDir.data));
+              }
+            }}>
+              {file}
             </div>
           ))}
         </div>
@@ -116,7 +102,7 @@ export default function App() {
             width="100%"
             theme="vs-dark"
             defaultLanguage="ruby"
-            defaultValue={code}
+            value={code}
             onChange={handleEditorChange}
             onMount={() => setLoading(false)}
             options={{
@@ -131,7 +117,12 @@ export default function App() {
           <div className={cs.editorLoading}>
             {loading && "loading..."}
           </div>
-          <button className={`${cs.runButton} ${loading ? cs.runButtonDisabled : ''}`} disabled={loading} onClick={() => !loading && runVM()}>
+          <button className={`${cs.installButton} ${loading ? cs.buttonDisabled : ""}`} disabled={loading}
+                  onClick={() => !loading && bundleInstall()}>
+            Bundle install
+          </button>
+          <button className={`${cs.runButton} ${loading ? cs.buttonDisabled : ""}`} disabled={loading}
+                  onClick={() => !loading && runCode()}>
             Run code
           </button>
         </div>

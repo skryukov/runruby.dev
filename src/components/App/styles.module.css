@@ -47,6 +47,16 @@
     display: block;
 }
 
+.menuFile {
+    cursor: default;
+    padding: 8px 8px 8px 16px;
+    border-radius: 8px;
+}
+
+.menuFileActive {
+    background-color: #424242;
+}
+
 .menuInputButton {
     white-space: nowrap;
 }
@@ -152,8 +162,8 @@
     background-color: #424242;
 }
 
-.runButton {
-    background-color: #388E3C;
+.installButton {
+    background-color: #7D2E45;
     border: none;
     color: #f1f1f1;
     font-weight: bold;
@@ -166,10 +176,29 @@
     border-radius: 8px;
 }
 
+.installButton:hover {
+    background-color: #6D2136;
+}
+
+.runButton {
+    background-color: #388E3C;
+    border: none;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-left: 8px;
+}
+
 .runButton:hover {
     background-color: #2E7D32;
 }
 
-.runButtonDisabled {
+.buttonDisabled {
     background-color: #424242;
 }

@@ -14,15 +14,10 @@
     "@monaco-editor/react": "^4.4.4",
     "@ruby/3.3-wasm-wasi": "^2.5.0",
     "@ruby/wasm-wasi": "^2.5.0",
-    "js-untar": "^2.0.0",
-    "pako": "^2.0.4",
-    "path-browserify": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/pako": "^2.0.3",
-    "@types/path-browserify": "^1.0.0",
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^4.2.1",
