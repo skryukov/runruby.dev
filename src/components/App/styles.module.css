@@ -39,73 +39,31 @@
     padding: 16px 8px;
 }
 
-.menuLabel {
-    font-size: 14px;
+.menuHead {
+    font-size: 16px;
     font-weight: bold;
     color: #f1f1f1;
-    padding: 8px 8px 16px;
-    display: block;
-}
-
-.menuFile {
-    cursor: default;
-    padding: 8px 8px 8px 16px;
-    border-radius: 8px;
-}
-
-.menuFileActive {
-    background-color: #424242;
-}
-
-.menuInputButton {
-    white-space: nowrap;
-}
-
-.menuInput {
-    background-color: transparent;
-    color: #f1f1f1;
-    padding: 8px 50px 8px 16px;
-    text-align: left;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
     margin-bottom: 8px;
-    border: 1px solid #ffffff14;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
 }
 
-.menuInstallButton {
-    transform: translateX(-100%);
-    background-color: #388E3C;
+.menuLabel {
+    flex: 1;
+}
+
+.menuButton {
     border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    font-size: 16px;
+    color: #424242;
+}
+
+.menuButton:hover {
     color: #f1f1f1;
-    font-weight: bold;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    cursor: pointer;
-    border-top-right-radius: 8px;
-    border-bottom-right-radius: 8px;
-    margin-top: 8px;
-}
-
-.menuDependencies {
-    padding-left: 16px;
-}
-
-.menuDependency {
-    padding-bottom: 4px;
-}
-
-.menuSpinner {
-    fill: #f1f1f1;
-    width: 16px;
-    height: 16px;
-    margin-left: 8px;
-    display: inline-block;
-    vertical-align: middle;
+    border-radius: 8px;
 }
 
 .editor {
@@ -116,6 +74,29 @@
     background-color: #1e1e1e;
     padding: 16px 0px;
     margin: 0 4px;
+}
+
+.editorHeader {
+    display: flex;
+    flex-direction: row;
+    padding: 0 16px 0 16px;
+    margin-bottom: 16px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.editorLabel {
+    font-size: 16px;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: #424242;
+}
+
+.editorPlaceholder {
+    font-size: 16px;
+    padding: 8px 16px;
 }
 
 .editorText {
@@ -149,7 +130,7 @@
     text-decoration: none;
     display: inline-block;
     font-size: 14px;
-    cursor: pointer;
+    cursor: default;
     border: none;
     border-radius: 8px;
 }
@@ -172,7 +153,7 @@
     text-decoration: none;
     display: inline-block;
     font-size: 14px;
-    cursor: pointer;
+    cursor: default;
     border-radius: 8px;
 }
 
@@ -190,7 +171,7 @@
     text-decoration: none;
     display: inline-block;
     font-size: 14px;
-    cursor: pointer;
+    cursor: default;
     border-radius: 8px;
     margin-left: 8px;
 }
@@ -200,5 +181,5 @@
 }
 
 .buttonDisabled {
-    background-color: #424242;
+    background-color: #424242 !important;
 }

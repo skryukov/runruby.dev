@@ -29,6 +29,7 @@ Bundler::Worker.prepend(Module.new do
 end)
 
 ENV["BUNDLE_SSL_VERIFY_MODE"] = "0"
+ENV["BUNDLE_SILENCE_ROOT_WARNING"] = "1"
 
 require "js/connection"
 
