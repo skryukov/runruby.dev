@@ -5,7 +5,6 @@ import svgr from "vite-plugin-svgr";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), svgr()],
-  base: "/ruby-wasi-playground/",
   server: {
     headers: {
       "Cross-Origin-Opener-Policy": "same-origin",
