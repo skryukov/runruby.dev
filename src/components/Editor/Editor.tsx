@@ -1,6 +1,6 @@
 import cs from "../App/styles.module.css";
 import MonacoEditor from "@monaco-editor/react";
-import { decode, encode, workDir } from "../../engines/wasi/editorFS.ts";
+import { decode, encode, gemFromURI, workDir } from "../../engines/wasi/editorFS.ts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Directory, File, SyncOPFSFile } from "@bjorn3/browser_wasi_shim";
 import { RbValue } from "@ruby/wasm-wasi";
@@ -23,7 +23,7 @@ function sortChildren(node: Directory): Entity[] {
   const entries = Object.entries(node.contents).map((entry) => {
     const id = idsMap.get(entry[1]) || nanoid();
     idsMap.set(entry[1], id);
-    return { id, name: entry[0], object: entry[1] }
+    return { id, name: entry[0], object: entry[1] };
   });
   entries.sort((a, b) => {
     if (a.object instanceof Directory && b.object instanceof File) return -1;
@@ -33,7 +33,7 @@ function sortChildren(node: Directory): Entity[] {
   return entries;
 }
 
-const idsMap = new Map<File|Directory|SyncOPFSFile, string>
+const idsMap = new Map<File | Directory | SyncOPFSFile, string>;
 
 function getPath(node: NodeApi<Entity>) {
   let path = node.data.name;
@@ -46,6 +46,7 @@ function getPath(node: NodeApi<Entity>) {
 }
 
 export const Editor = () => {
+  const [initializing, setInitializing] = useState(true);
   const [loading, setLoading] = useState(true);
   const [result, setResult] = useState("Press run...");
   const [log, setLog] = useState<string[]>([]);
@@ -113,14 +114,14 @@ export const Editor = () => {
             onError && onError(err);
           })
           .finally(() => {
-            setLoading(false)
+            setLoading(false);
             setTreeData(sortChildren(workDir.dir));
           })
       , 20);
   };
 
   const runCode = () => {
-    if (!currentFilePath?.endsWith('.rb')) return;
+    if (!currentFilePath?.endsWith(".rb")) return;
     if (currentFile === null) return;
 
     runVM(`require "bundler/setup";${decode(currentFile.data)}`);
@@ -152,7 +153,7 @@ export const Editor = () => {
       }
       parent.contents[name] = node.data.object;
       delete parent.contents[node.data.name];
-      node.data = {...node.data, name};
+      node.data = { ...node.data, name };
       setTreeData(sortChildren(workDir.dir));
     }
   };
@@ -182,8 +183,12 @@ export const Editor = () => {
     setTreeData(sortChildren(workDir.dir));
   };
 
-  const canRunCode = useMemo(() => !loading && currentFilePath?.endsWith('.rb'), [currentFilePath, loading]);
-  const canRunBundleInstall = useMemo(() => !loading && treeData.find((entry) => entry.name === 'Gemfile'), [loading, treeData]);
+  const canRunCode = useMemo(() => !loading && currentFilePath?.endsWith(".rb"), [currentFilePath, loading]);
+  const canRunBundleInstall = useMemo(() => !loading && treeData.find((entry) => entry.name === "Gemfile"), [loading, treeData]);
+
+  useEffect(() => {
+    !initializing && gemFromURI() && bundleInstall();
+  }, [initializing]);
 
   return (
     <>
@@ -206,7 +211,7 @@ export const Editor = () => {
         <Tree
           openByDefault={false}
           data={treeData}
-          childrenAccessor={({object}) => (object instanceof Directory) ? sortChildren(object) : null}
+          childrenAccessor={({ object }) => (object instanceof Directory) ? sortChildren(object) : null}
           ref={treeRef}
           disableDrag={true}
           disableDrop={true}
@@ -238,7 +243,10 @@ export const Editor = () => {
                 path={currentFilePath}
                 defaultValue={decode(currentFile.data)}
                 onChange={handleEditorChange}
-                onMount={() => setLoading(false)}
+                onMount={() => {
+                  setLoading(false);
+                  setInitializing(false);
+                }}
                 options={{
                   wordWrap: "on",
                   minimap: { enabled: false },
@@ -258,7 +266,8 @@ export const Editor = () => {
           <div className={cs.editorLoading}>
             {loading && "loading..."}
           </div>
-          <button className={`${cs.installButton} ${canRunBundleInstall ? "" : cs.buttonDisabled}`} disabled={!canRunBundleInstall}
+          <button className={`${cs.installButton} ${canRunBundleInstall ? "" : cs.buttonDisabled}`}
+                  disabled={!canRunBundleInstall}
                   onClick={() => !loading && bundleInstall()}>
             Bundle install
           </button>
