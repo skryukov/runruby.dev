@@ -1,8 +1,8 @@
-import cs from "./Node.module.css";
-import { NodeRendererProps } from "react-arborist";
+import { NodeRendererProps, NodeApi } from "react-arborist";
 import { VscEdit, VscFile, VscFolder, VscFolderOpened, VscTrash } from "react-icons/vsc";
-import { NodeApi } from "react-arborist/dist/module/interfaces/node-api";
+
 import { Entity } from "../Editor/Editor.tsx";
+import cs from "./styles.module.css";
 
 function isValidFileName(fileName: string) {
   if (fileName.trim() === "") {

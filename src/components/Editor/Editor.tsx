@@ -1,23 +1,22 @@
-import cs from "../App/styles.module.css";
 import MonacoEditor from "@monaco-editor/react";
-import { decode, encode, gemFromURI, workDir } from "../../engines/wasi/editorFS.ts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Directory, File, SyncOPFSFile } from "@bjorn3/browser_wasi_shim";
 import { RbValue } from "@ruby/wasm-wasi";
-import { runWASI } from "../../engines/wasi";
+import { CreateHandler, DeleteHandler, RenameHandler, Tree, TreeApi, NodeApi } from "react-arborist";
+import { VscNewFile, VscNewFolder } from "react-icons/vsc";
+import { nanoid } from "nanoid";
 
-import Node from "../FileTree/Node";
+import { runWASI } from "../../engines/wasi";
+import { decode, encode, gemFromURI, workDir } from "../../engines/wasi/editorFS.ts";
+
+import Node from "../Node/Node";
+import cs from "../App/styles.module.css";
 
 export type Entity = {
   id: string;
   name: string;
   object: Directory | File | SyncOPFSFile;
 }
-
-import { CreateHandler, DeleteHandler, RenameHandler, Tree, TreeApi } from "react-arborist";
-import { NodeApi } from "react-arborist/dist/module/interfaces/node-api";
-import { VscNewFile, VscNewFolder } from "react-icons/vsc";
-import { nanoid } from "nanoid";
 
 function sortChildren(node: Directory): Entity[] {
   const entries = Object.entries(node.contents).map((entry) => {
@@ -52,7 +51,14 @@ export const Editor = () => {
   const [log, setLog] = useState<string[]>([]);
   const [editorValueSource, setEditorValueSource] = useState<"result" | "logs">("result");
 
-  const [currentFilePath, setCurrentFilePath] = useState<string | null>("main.rb");
+  const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
+  const treeRef = useRef<TreeApi<Entity>>(null);
+  const [treeData, setTreeData] = useState(sortChildren(workDir.dir));
+
+  const currentFilePath = useMemo(() => {
+    const currentNode = treeRef.current?.get(currentNodeId);
+    return currentNode ? getPath(currentNode) : null;
+  }, [currentNodeId]);
 
   const currentFile = useMemo(
     () => {
@@ -124,10 +130,17 @@ export const Editor = () => {
     if (!currentFilePath?.endsWith(".rb")) return;
     if (currentFile === null) return;
 
-    runVM(`require "bundler/setup";${decode(currentFile.data)}`);
+    runVM(`eval <<~CODE, binding, '${currentFilePath}', 0
+        ${canRunBundleInstall ? "require \"bundler/setup\";" : ""}${decode(currentFile.data)}
+      CODE`);
   };
   const bundleInstall = () => {
-    runVM(`require "bundler/cli";require "bundler/cli/install";Bundler::CLI::Install.new({path: './gems'}).run`,
+    runVM(`require "rubygems_stub"
+    require "thread_stub"
+    require "bundler_stub"
+    require "bundler/cli"
+    require "bundler/cli/install"
+    Bundler::CLI::Install.new({path: './gems'}).run`,
       () => {
         setResult("Bundle install successful (see logs for details)");
       },
@@ -140,9 +153,6 @@ export const Editor = () => {
   const handleEditorChange = (value: string | undefined) => {
     setCode(value || "");
   };
-  const treeRef = useRef<TreeApi<Entity>>(null);
-
-  const [treeData, setTreeData] = useState(sortChildren(workDir.dir));
 
   const onRename: RenameHandler<Entity> = ({ name, node }) => {
     const parent = (node.parent == null || node.parent.isRoot) ? workDir.dir : node.parent.data.object as Directory;
@@ -153,8 +163,12 @@ export const Editor = () => {
       }
       parent.contents[name] = node.data.object;
       delete parent.contents[node.data.name];
-      node.data = { ...node.data, name };
+
       setTreeData(sortChildren(workDir.dir));
+
+      setTimeout(() => {
+        setCurrentNodeId(currentNodeId);
+      }, 20);
     }
   };
 
@@ -176,7 +190,7 @@ export const Editor = () => {
         const parent = (node.parent == null || node.parent.isRoot) ? workDir.dir : node.parent.data.object as Directory;
         delete parent.contents[node.data.name];
         if (currentFilePath === getPath(node)) {
-          setCurrentFilePath(null);
+          setCurrentNodeId(null);
         }
       }
     });
@@ -187,8 +201,16 @@ export const Editor = () => {
   const canRunBundleInstall = useMemo(() => !loading && treeData.find((entry) => entry.name === "Gemfile"), [loading, treeData]);
 
   useEffect(() => {
-    !initializing && gemFromURI() && bundleInstall();
-  }, [initializing]);
+    if (initializing) {
+      const tree = treeRef.current;
+      if (tree) {
+        const node = tree.visibleNodes.find((n) => n.data.name?.endsWith(".rb"));
+        node ? node.activate() : tree?.firstNode?.activate();
+      }
+    } else {
+      gemFromURI() && bundleInstall();
+    }
+  }, [initializing, treeRef]);
 
   return (
     <>
@@ -220,7 +242,7 @@ export const Editor = () => {
           onDelete={onDelete}
           onActivate={(node: NodeApi) => {
             if (node.isLeaf) {
-              setCurrentFilePath(getPath(node));
+              setCurrentNodeId(node.id);
             }
           }}
         >
@@ -256,9 +278,11 @@ export const Editor = () => {
               />
 
             ) : (
-              <div className={cs.editorPlaceholder}>
-                Select a file to edit
-              </div>
+              !initializing && (
+                <div className={cs.editorPlaceholder}>
+                  Select a file to edit
+                </div>
+              )
             )
           }
         </div>
