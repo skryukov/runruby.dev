@@ -132,9 +132,10 @@ export const Editor = () => {
     if (!currentFilePath?.endsWith(".rb")) return;
     if (currentFile === null) return;
 
-    runVM(`eval <<~CODE, binding, '${currentFilePath}', 0
-        ${canRunBundleInstall ? "require \"bundler/setup\";" : ""}${decode(currentFile.data)}
-      CODE`);
+    runVM(`
+      ${canRunBundleInstall ? "require \"bundler/setup\";" : ""}
+      Kernel.load '${currentFilePath}'
+    `);
   };
   const bundleInstall = () => {
     runVM(`require "rubygems_stub"
