@@ -103,7 +103,7 @@ export const Editor = () => {
     setEditorValueSource("logs");
     const setStdout = (line: string) => {
       console.log(line);
-      setLog((old) => [...old, line]);
+      setLog((old) => [...old, `[info] ${line}`]);
     };
     const setStderr = (line: string) => {
       console.warn(line);
@@ -260,7 +260,7 @@ export const Editor = () => {
     if (initializing) {
       activateFirstFile();
     } else {
-      gemFromURI() && bundleInstall();
+      (gemFromURI() || gistFromURI()) && canRunBundleInstall && bundleInstall();
     }
   }, [initializing, treeRef]);
 
