@@ -20,7 +20,7 @@
     let search = (l.search ? l.search.slice(1) : "");
     const paths = l.pathname.slice(1).split("/");
     if (paths[0] === "gist") {
-      search = "gist=" + paths[0] + (search ? "&" + search : "");
+      search = "gist=" + paths[1] + (search ? "&" + search : "");
     } else if (paths[0]) {
       search = "gem=" + paths[0] + (search ? "&" + search : "");
     }
