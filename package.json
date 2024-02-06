@@ -14,6 +14,7 @@
     "@monaco-editor/react": "^4.4.4",
     "@ruby/3.3-wasm-wasi": "^2.5.0",
     "@ruby/wasm-wasi": "^2.5.0",
+    "jszip": "^3.10.1",
     "nanoid": "^5.0.5",
     "react": "^18.2.0",
     "react-arborist": "^3.4.0",

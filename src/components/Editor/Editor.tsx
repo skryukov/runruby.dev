@@ -3,8 +3,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Directory, File, SyncOPFSFile } from "@bjorn3/browser_wasi_shim";
 import { RbValue } from "@ruby/wasm-wasi";
 import { CreateHandler, DeleteHandler, RenameHandler, Tree, TreeApi, NodeApi } from "react-arborist";
-import { VscNewFile, VscNewFolder } from "react-icons/vsc";
+import { VscFileZip, VscNewFile, VscNewFolder } from "react-icons/vsc";
 import { nanoid } from "nanoid";
+import * as JSZip from "jszip";
 
 import importFromGist from "../../gist.ts";
 import { runWASI } from "../../engines/wasi";
@@ -198,6 +199,28 @@ export const Editor = () => {
     setTreeData(sortChildren(workDir.dir));
   };
 
+  const downloadZip = () => {
+    const zip = new JSZip();
+    const addFile = (dir: Directory, path: string) => {
+      Object.entries(dir.contents).forEach(([name, file]) => {
+        if (file instanceof Directory) {
+          addFile(file, `${path}/${name}`);
+        } else {
+          zip.file(`${path}/${name}`, decode((file as File).data));
+        }
+      });
+    };
+    addFile(workDir.dir, "");
+    zip.generateAsync({ type: "blob" }).then((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "project.zip";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  };
+
   const canRunCode = useMemo(() => !loading && currentFilePath?.endsWith(".rb"), [currentFilePath, loading]);
   const canRunBundleInstall = useMemo(() => !loading && treeData.find((entry) => entry.name === "Gemfile"), [loading, treeData]);
 
@@ -243,9 +266,15 @@ export const Editor = () => {
   return (
     <>
       <div className={cs.menu}>
-
         <div className={cs.menuHead}>
           <label className={cs.menuLabel}>Files</label>
+          <button
+            className={cs.menuButton}
+            onClick={() => downloadZip()}
+            title="Download as .zip"
+          >
+            <VscFileZip />
+          </button>
           <button
             className={cs.menuButton}
             onClick={() => treeRef.current?.createInternal()}
