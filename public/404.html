@@ -15,14 +15,17 @@
     // Note: this 404.html file must be at least 512 bytes for it to work
     // with Internet Explorer (it is currently > 512 bytes)
 
-    var l = window.location;
-    l.replace(
-      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
-      '/?gem=' +
-      encodeURIComponent(l.pathname.slice(1).split('/').join('/')) +
-      (l.search ? '&' + l.search.slice(1) : '') + l.hash
-    );
+    const l = window.location;
+    const host = l.protocol + "//" + l.hostname + (l.port ? ":" + l.port : "");
+    let search = (l.search ? l.search.slice(1) : "");
+    const paths = l.pathname.slice(1).split("/");
+    if (paths[0] === "gist") {
+      search = "gist=" + paths[1] + (search ? "&" + search : "");
+    } else if (paths[0]) {
+      search = "gem=" + paths[0] + (search ? "&" + search : "");
+    }
 
+    l.replace(host + "/?" + search + l.hash);
   </script>
 </head>
 <body>

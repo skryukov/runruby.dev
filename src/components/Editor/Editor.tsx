@@ -6,8 +6,9 @@ import { CreateHandler, DeleteHandler, RenameHandler, Tree, TreeApi, NodeApi } f
 import { VscNewFile, VscNewFolder } from "react-icons/vsc";
 import { nanoid } from "nanoid";
 
+import importFromGist from "../../gist.ts";
 import { runWASI } from "../../engines/wasi";
-import { decode, encode, gemFromURI, workDir } from "../../engines/wasi/editorFS.ts";
+import { decode, encode, gemFromURI, gistFromURI, workDir } from "../../engines/wasi/editorFS.ts";
 
 import Node from "../Node/Node";
 import cs from "../App/styles.module.css";
@@ -201,12 +202,39 @@ export const Editor = () => {
   const canRunBundleInstall = useMemo(() => !loading && treeData.find((entry) => entry.name === "Gemfile"), [loading, treeData]);
 
   useEffect(() => {
+    const gist = gistFromURI();
+    if (gist) {
+      importFromGist(gist).then(({ files }) => {
+        files.forEach(({ filename, content }) => {
+          const parts = filename.split("/");
+          const name = parts.pop() as string;
+          let dir = workDir.dir;
+          parts.forEach((part) => {
+            if (!dir.contents[part]) {
+              dir.contents[part] = new Directory({});
+            }
+            dir = dir.contents[part] as Directory;
+          });
+          workDir.dir.contents[name] = new File(encode(content));
+        });
+
+        setTreeData(sortChildren(workDir.dir));
+        setTimeout(() => activateFirstFile(), 20);
+      });
+    }
+  }, []);
+
+  function activateFirstFile() {
+    const tree = treeRef.current;
+    if (tree) {
+      const node = tree.visibleNodes.find((n) => n.data.name?.endsWith(".rb"));
+      node ? node.activate() : tree?.firstNode?.activate();
+    }
+  }
+
+  useEffect(() => {
     if (initializing) {
-      const tree = treeRef.current;
-      if (tree) {
-        const node = tree.visibleNodes.find((n) => n.data.name?.endsWith(".rb"));
-        node ? node.activate() : tree?.firstNode?.activate();
-      }
+      activateFirstFile();
     } else {
       gemFromURI() && bundleInstall();
     }

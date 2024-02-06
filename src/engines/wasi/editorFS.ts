@@ -12,6 +12,12 @@ export const gemFromURI = () => {
   return params.get("gem");
 }
 
+export const gistFromURI = () => {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  return params.get("gist");
+}
+
 const defaultGem = gemFromURI() || gem;
 
 export const initialRubyCode = `# This is a Ruby WASI playground
@@ -36,7 +42,8 @@ export const decode = (() => {
   return (buffer: Uint8Array) => decoder.decode(buffer);
 })();
 
-export const workDir = new PreopenDirectory("/", {
+export const workDir = new PreopenDirectory("/", gistFromURI() ? {} : {
   "Gemfile": new File(encode(initialGemfile)),
   "main.rb": new File(encode(initialRubyCode)),
 });
+
