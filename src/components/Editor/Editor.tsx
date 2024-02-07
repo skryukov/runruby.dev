@@ -5,7 +5,9 @@ import { RbValue } from "@ruby/wasm-wasi";
 import { CreateHandler, DeleteHandler, RenameHandler, Tree, TreeApi, NodeApi } from "react-arborist";
 import { VscFileZip, VscNewFile, VscNewFolder } from "react-icons/vsc";
 import { nanoid } from "nanoid";
-import * as JSZip from "jszip";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
+
 
 import importFromGist from "../../gist.ts";
 import { runWASI } from "../../engines/wasi";
@@ -213,12 +215,7 @@ export const Editor = () => {
     };
     addFile(workDir.dir, "");
     zip.generateAsync({ type: "blob" }).then((blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "project.zip";
-      a.click();
-      URL.revokeObjectURL(url);
+      saveAs(blob, "runruby.zip");
     });
   };
 
