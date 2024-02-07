@@ -135,8 +135,10 @@ export const Editor = () => {
     if (currentFile === null) return;
 
     runVM(`
-      ${canRunBundleInstall ? "require \"bundler/setup\";" : ""}
-      Kernel.load '${currentFilePath}'
+      ${canRunBundleInstall ? "require 'bundler/setup'" : ""}
+      eval(<<~'CODE', binding, '${currentFilePath}', 1)
+       ${code}
+      CODE
     `);
   };
   const bundleInstall = () => {
