@@ -1,0 +1,26 @@
+.menuHead {
+    font-size: 16px;
+    font-weight: bold;
+    color: #f1f1f1;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.menuLabel {
+    flex: 1;
+}
+
+.menuButton {
+    border: none;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    font-size: 16px;
+    color: #424242;
+}
+
+.menuButton:hover {
+    color: #f1f1f1;
+    border-radius: 8px;
+}

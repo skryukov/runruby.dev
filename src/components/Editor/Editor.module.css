@@ -1,0 +1,80 @@
+.editorHeader {
+    display: flex;
+    flex-direction: row;
+    padding: 0 16px 0 16px;
+    margin-bottom: 16px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.editorLabel {
+    font-size: 16px;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: #424242;
+}
+
+.editorText {
+    padding: 0 8px;
+    flex: 1;
+}
+
+.editorPlaceholder {
+    font-size: 16px;
+    padding: 32px 32px;
+}
+
+.editorFooter {
+    padding: 16px 16px 0;
+    margin-top: 8px;
+    text-align: right;
+    border-top: 0.5px #ffffff14 solid;
+}
+
+.editorLoading {
+    padding: 0 16px;
+    display: inline-block;
+}
+
+.installButton {
+    background-color: #7D2E45;
+    border: none;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: default;
+    border-radius: 8px;
+}
+
+.installButton:hover {
+    background-color: #6D2136;
+}
+
+.runButton {
+    background-color: #388E3C;
+    border: none;
+    color: #f1f1f1;
+    font-weight: bold;
+    padding: 8px 16px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    cursor: default;
+    border-radius: 8px;
+    margin-left: 8px;
+}
+
+.runButton:hover {
+    background-color: #2E7D32;
+}
+
+.buttonDisabled {
+    background-color: #424242 !important;
+}

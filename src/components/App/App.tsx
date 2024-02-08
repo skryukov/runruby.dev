@@ -1,6 +1,6 @@
-import { Editor } from "../Editor/Editor.tsx";
+import { Content } from "../Content/Content.tsx";
 
-import cs from "./styles.module.css";
+import cs from "./App.module.css";
 
 export default function App() {
   return (
@@ -8,7 +8,7 @@ export default function App() {
       <div className={cs.header}>
         <h1 className={cs.title}>RunRuby.dev</h1>
       </div>
-      <Editor />
+      <Content />
     </div>
   );
 }

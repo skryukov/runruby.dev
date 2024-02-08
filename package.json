@@ -4,9 +4,9 @@
   "type": "module",
   "version": "0.0.0",
   "scripts": {
-    "start": "vite",
     "dev": "vite",
     "build": "tsc && vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -24,10 +24,14 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
-    "@types/react": "^18.2.47",
-    "@types/react-dom": "^18.2.18",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@typescript-eslint/eslint-plugin": "^6.19.0",
+    "@typescript-eslint/parser": "^6.19.0",
     "@vitejs/plugin-react": "^4.2.1",
-    "prettier": "^3.2.4",
+    "eslint": "^8.56.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.5",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
     "vite-plugin-svgr": "^4.2.0"

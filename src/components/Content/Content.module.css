@@ -1,0 +1,24 @@
+.menu {
+    grid-area: menu;
+    padding: 16px 8px;
+}
+
+.editor {
+    grid-area: editor;
+    display: flex;
+    flex-direction: column;
+    border-radius: 16px;
+    background-color: #1e1e1e;
+    padding: 16px 0px;
+    margin: 0 4px;
+}
+
+.output {
+    grid-area: output;
+    background-color: #1e1e1e;
+    border-radius: 16px;
+    padding: 16px 8px;
+    margin: 0 4px;
+    display: flex;
+    flex-direction: column;
+}

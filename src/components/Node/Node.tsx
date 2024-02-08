@@ -1,8 +1,8 @@
 import { NodeRendererProps, NodeApi } from "react-arborist";
 import { VscEdit, VscFile, VscFolder, VscFolderOpened, VscTrash } from "react-icons/vsc";
 
-import { Entity } from "../Editor/Editor.tsx";
-import cs from "./styles.module.css";
+import { Entity } from "../../fsMap.ts";
+import cs from "./Node.module.css";
 
 function isValidFileName(fileName: string) {
   if (fileName.trim() === "") {
@@ -76,7 +76,7 @@ const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity>) => {
             <VscEdit />
           </button>
           <button onClick={(e) => {
-            if (window.confirm(`Are you sure you want to delete this ${node.isLeaf ? 'file' : 'folder'}?`)) {
+            if (window.confirm(`Are you sure you want to delete this ${node.isLeaf ? "file" : "folder"}?`)) {
               tree.delete(node.id);
             }
             e.stopPropagation();

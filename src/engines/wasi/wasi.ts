@@ -36,7 +36,7 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   const instance = await WebAssembly.instantiate(await wasmModulePromise, imports);
   await ruby.setInstance(instance);
 
-  wasi.initialize(instance as any);
+  wasi.initialize(instance as never);
   ruby.initialize(["ruby.wasm", "-e_=0", `-I${rubyStubsPath}`]);
 
   return ruby;

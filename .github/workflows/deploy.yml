@@ -15,6 +15,7 @@ jobs:
           cache: npm
       - run: |
           npm install
+          npm run lint
           npm run build
       - uses: JamesIves/github-pages-deploy-action@v4
         with:
