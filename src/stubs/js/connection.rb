@@ -103,7 +103,7 @@ class JS::Connection
 
     body = js_response[:uint8array].to_s != "undefined" ? js_response[:uint8array][:length].to_i.times.map {js_response[:uint8array].call(:at, _1).to_i}.pack("C*") : js_response[:text].to_s
     status = js_response[:status]
-    response_class = Gem::Net::HTTPResponse::CODE_TO_OBJ[status.to_s]
+    response_class = defined?(Gem::Net::HTTPResponse::CODE_TO_OBJ) ? Gem::Net::HTTPResponse::CODE_TO_OBJ[status.to_s] : Net::HTTPResponse::CODE_TO_OBJ[status.to_s]
     http_response = response_class.new("1.1", status.to_i, MESSAGES[status.to_i])
     http_response.instance_variable_set(:@read, true)
 

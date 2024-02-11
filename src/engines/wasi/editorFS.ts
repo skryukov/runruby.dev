@@ -1,9 +1,19 @@
 import { File, PreopenDirectory } from "@bjorn3/browser_wasi_shim";
 
-const gem = "uri-idna";
+const gem = "octokit";
 
 const gemCode = `
-URI::IDNA.register(alabel: "xn--gdkl8fhk5egc.jp", ulabel: "ハロー・ワールド.jp")
+# RunRuby.dev comes with a WASI-compatible Faraday adapter
+# that uses the Fetch API to make HTTP requests
+require "faraday/adapter/js"
+Octokit.middleware.adapter :js
+
+# Now we can use Octokit as we would in a normal Ruby environment
+client = Octokit::Client.new
+user = client.user("matz")
+
+# And it just works 🚀
+{login: user.login, name: user.name, company: user.company}
 `;
 
 export const gemFromURI = () => {
