@@ -73,6 +73,9 @@ File.singleton_class.prepend(Module.new do
   def writable?(*) = true
 end)
 
+ENV["BUNDLE_SSL_VERIFY_MODE"] = "0"
+ENV["BUNDLE_SILENCE_ROOT_WARNING"] = "1"
+
 require "bundler"
 
 # Bundler worker uses threads for async requests
@@ -100,9 +103,6 @@ Bundler::Fetcher::CompactIndex.prepend(Module.new do
     true
   end
 end)
-
-ENV["BUNDLE_SSL_VERIFY_MODE"] = "0"
-ENV["BUNDLE_SILENCE_ROOT_WARNING"] = "1"
 
 require "js/connection"
 
