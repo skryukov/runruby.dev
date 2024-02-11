@@ -66,7 +66,11 @@ class JS::Connection
     }.each { |_, v| v.freeze }.freeze
 
   def proxy_uri(uri)
-    "https://rubygems-cors-proxy.sgkryukov.workers.dev/?#{uri.to_s}"
+    if URI(uri.to_s).host.match? /(\A|\.)rubygems.org\z/
+      "https://rubygems.runruby.dev/?#{uri.to_s}"
+    else
+      uri.to_s
+    end
   end
 
   def request(uri, req)
@@ -85,11 +89,9 @@ class JS::Connection
           response.headers.get('content-type') === 'application/octet-stream'
         ) {
           return response.arrayBuffer().then(arrayBuffer => {
-            let tmpStr = '';
-            (new Uint8Array(arrayBuffer)).forEach((b) => tmpStr += String.fromCharCode(b));
-            const base64 = btoa(tmpStr);
+            const uint8array = new Uint8Array(arrayBuffer);
 
-            return {status: response.status, headers: response.headers, base64}
+            return {status: response.status, headers: response.headers, uint8array}
           })
         } else {
           return response.text().then(text => {
@@ -99,7 +101,7 @@ class JS::Connection
       })
     JS
 
-    body = js_response[:base64].to_s != "undefined" ? Base64.decode64(js_response[:base64].to_s) : js_response[:text].to_s
+    body = js_response[:uint8array].to_s != "undefined" ? js_response[:uint8array][:length].to_i.times.map {js_response[:uint8array].call(:at, _1).to_i}.pack("C*") : js_response[:text].to_s
     status = js_response[:status]
     response_class = Gem::Net::HTTPResponse::CODE_TO_OBJ[status.to_s]
     http_response = response_class.new("1.1", status.to_i, MESSAGES[status.to_i])

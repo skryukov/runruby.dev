@@ -13,4 +13,7 @@ Gem::Installer.prepend(Module.new do
   def check_that_user_bin_dir_is_in_path = true
   def ensure_writable_dir(*) = true
   def generate_bin_script(*) = true
+  def build_extensions(*)
+    warn "Extensions are not supported"
+  end
 end)

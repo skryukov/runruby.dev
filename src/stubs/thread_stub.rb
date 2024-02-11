@@ -7,8 +7,13 @@ class Thread
     end
   end
 
-  def self.new(&block)
-    warn "Thread.new executed synchronously"
-    Result.new(yield)
+  class << self
+    def new(&block)
+      warn "Thread.new executed synchronously"
+      Result.new(yield)
+    end
+
+    alias_method :start, :new
+    alias_method :fork, :new
   end
 end
