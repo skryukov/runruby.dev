@@ -3,6 +3,10 @@
     flex: 1;
 }
 
+.tab {
+  padding: 0 8px 0 32px;
+}
+
 .switchButtons {
     display: flex;
     flex-direction: row;

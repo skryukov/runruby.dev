@@ -1,41 +1,35 @@
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Directory, File } from "@bjorn3/browser_wasi_shim";
 import MonacoEditor from "@monaco-editor/react";
-import { TreeApi } from "react-arborist";
 
 import { decode, encode, gemFromURI, gistFromURI, workDir } from "../../engines/wasi/editorFS.ts";
 
 import importFromGist from "../../gist.ts";
-import { OutputTab } from "../Output/Output.tsx";
-import { Entity } from "../../fsMap.ts";
 import { RunVMParams } from "../../useVM.ts";
 import cs from "./Editor.module.css";
 import { db } from "../../db.ts";
 import { bundleDir, gemsDir } from "../../engines/wasi/wasi.ts";
+import { refreshCacheInfo } from "../../stores/cache.ts";
+import { openTab } from "../../stores/output.ts";
+import { useStore } from "@nanostores/react";
+import { $editor, currentFilePathStore, currentFileStore, refreshTreeData, setCode } from "../../stores/editor.ts";
 
 type EditorProps = {
   loading: boolean;
-  currentFilePath: string | null;
-  treeData: Entity[];
-  updateTreeData: () => void;
   runVM: (RunVMParams: RunVMParams) => void;
-  treeRef: RefObject<TreeApi<Entity>>;
-  setOutputTab: (tab: OutputTab) => void;
 }
 export const Editor = ({
                          loading: VMRunning,
-                         currentFilePath,
-                         treeData,
                          runVM,
-                         updateTreeData,
-                         treeRef,
-                         setOutputTab
                        }: EditorProps) => {
   const [editorInitializing, setInitializing] = useState(true);
-  const [code, setCode] = useState<string | null>(null);
   const bundleInstalled = useRef(false);
 
   const loading = VMRunning || editorInitializing;
+
+  const { treeData, tree, code } = useStore($editor);
+  const currentFilePath = useStore(currentFilePathStore);
+  const currentFile = useStore(currentFileStore);
 
   const canRunBundleInstall = useMemo(() => (
     !loading && treeData.find((entry) => entry.name === "Gemfile")
@@ -44,26 +38,6 @@ export const Editor = ({
   const canRunCode = useMemo(() => (
     !loading && currentFilePath?.endsWith(".rb")
   ), [currentFilePath, loading]);
-
-  const currentFile = useMemo(
-    () => {
-      if (currentFilePath === null) return null;
-
-      const pathParts = currentFilePath.split("/");
-      let currentDir = workDir.dir;
-      let currentFile = currentDir.contents[pathParts[0]];
-      for (let i = 1; i < pathParts.length; i++) {
-        if (currentFile instanceof Directory) {
-          currentDir = currentFile as Directory;
-          currentFile = currentDir.contents[pathParts[i]];
-        } else {
-          throw new Error(`Invalid path: ${currentFilePath}`);
-        }
-      }
-      return currentFile as File;
-    },
-    [currentFilePath]
-  );
 
   const runCode = useCallback(() => {
     if (!currentFilePath?.endsWith(".rb")) return;
@@ -74,7 +48,15 @@ export const Editor = ({
       eval(<<~'CODE', binding, '${currentFilePath}', 1)
        ${code}
       CODE
-    `
+    `,
+      onBefore: () => {
+        openTab("logs");
+      },
+      onSuccess: () => {
+        openTab("logs");
+      }, onError: () => {
+        openTab("logs");
+      },
     });
   }, [canRunBundleInstall, code, currentFilePath, runVM]);
 
@@ -87,42 +69,40 @@ export const Editor = ({
     require "bundler/cli/install"
     begin
       Bundler::CLI::Install.new({path: './gems'}).run
-      "Bundle install successful (see logs for details)"
     rescue StandardError => e
-      $stderr << e.message << "\\n" << e.backtrace.join("\\n") << "\\n"
-      "Bundle install failed\n#{e.message}"
+      $stderr << e.message << "\\n" << e.backtrace.join("\\n")
     end
     `,
         onBefore: () => {
-          setOutputTab("logs");
+          openTab("logs");
         },
         onSuccess: () => {
-          setOutputTab("result");
-          db.fsCache.clear().then(() => {
-            db.fsCache.add({
+          openTab("logs");
+          db.fsCache.clear().then(async () => {
+            await db.fsCache.add({
               key: "gemsDir",
-              data: gemsDir.dir.contents
+              data: gemsDir.dir.contents as never
             });
-            db.fsCache.add({
+            await db.fsCache.add({
               key: "bundleDir",
-              data: bundleDir.dir.contents
+              data: bundleDir.dir.contents as never
             });
+            refreshCacheInfo();
           })
         }, onError: () => {
-          setOutputTab("logs");
+          openTab("logs");
         },
-        onFinally: updateTreeData
+        onFinally: refreshTreeData
       }
     );
-  }, [runVM, setOutputTab, updateTreeData]);
+  }, [runVM]);
 
   const activateFirstFile = useCallback(() => {
-    const tree = treeRef.current;
     if (tree) {
       const node = tree.visibleNodes.find((n) => n.data.name?.endsWith(".rb"));
       node ? node.activate() : tree?.firstNode?.activate();
     }
-  }, [treeRef]);
+  }, [tree]);
 
   useEffect(() => {
     if (currentFile === null) return;
@@ -147,11 +127,11 @@ export const Editor = ({
           workDir.dir.contents[name] = new File(encode(content));
         });
 
-        updateTreeData();
+        refreshTreeData();
         setTimeout(() => activateFirstFile(), 20);
       });
     }
-  }, [activateFirstFile, updateTreeData]);
+  }, [activateFirstFile]);
 
   useEffect(() => {
     if (editorInitializing) {
@@ -160,7 +140,7 @@ export const Editor = ({
       (gemFromURI() || gistFromURI()) && canRunBundleInstall && bundleInstall();
       bundleInstalled.current = true;
     }
-  }, [activateFirstFile, bundleInstall, canRunBundleInstall, editorInitializing, treeRef]);
+  }, [activateFirstFile, bundleInstall, canRunBundleInstall, editorInitializing]);
 
   const handleEditorChange = (value: string | undefined) => {
     setCode(value || "");

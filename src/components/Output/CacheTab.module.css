@@ -1,0 +1,53 @@
+.cacheInfo{
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-top: auto;
+    font-size: 14px;
+    color: #f1f1f1;
+    margin-bottom: 8px;
+}
+
+.cacheInfoLabel {
+    margin-top: 16px;
+    font-size: 16px;
+    font-weight: bold;
+    display: inline-block;
+    color: #f1f1f1;
+}
+
+.cacheInfoContent {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 40px;
+}
+
+.clearCacheButton {
+    padding: 4px 8px;
+    border: none;
+    background: #7D2E45;
+    color: #f1f1f1;
+    border-radius: 8px;
+    cursor: default;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.clearCacheButton:hover {
+    background: #5C1D2E;
+}
+
+.buttonDisabled {
+    background-color: #424242 !important;
+}
+
+.listOfGems {
+    overflow-y: scroll;
+    max-height: 400px;
+    margin: 8px 0;
+}
+.listOfGems ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}

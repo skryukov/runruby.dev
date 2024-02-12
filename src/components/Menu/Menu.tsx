@@ -1,26 +1,28 @@
-import { RefObject } from "react";
+import { useCallback, useRef } from "react";
 import { CreateHandler, DeleteHandler, NodeApi, RenameHandler, Tree, TreeApi } from "react-arborist";
 import { Directory, File } from "@bjorn3/browser_wasi_shim";
 import { nanoid } from "nanoid";
-import JSZip from "jszip";
-import { saveAs } from "file-saver";
 import { VscFileZip, VscNewFile, VscNewFolder } from "react-icons/vsc";
 
-import { decode, encode, workDir } from "../../engines/wasi/editorFS.ts";
-import Node from "../Node/Node.tsx";
+import { encode, workDir } from "../../engines/wasi/editorFS.ts";
+import { Node } from "../Node/Node.tsx";
 import { Entity, getPath, idsMap, sortChildren } from "../../fsMap.ts";
 import cs from "../Menu/Menu.module.css";
-import { formatBytes, useDBCacheInfo } from "../../useDBCacheInfo.ts";
+import {
+  $editor,
+  $editorVersion,
+  currentFilePathStore,
+  refreshTreeData,
+  setCurrentNodeId,
+  setTree
+} from "../../stores/editor.ts";
+import { downloadZip } from "../../downloadZip.ts";
+import { useStore } from "@nanostores/react";
 
-type MenuParams = {
-  updateTreeData: () => void;
-  setCurrentNodeId: (id: string | null) => void;
-  treeRef: RefObject<TreeApi<Entity>>;
-  treeData: Entity[];
-  currentFilePath: string | null;
-}
+export const Menu = () => {
+  const { treeData, tree } = useStore($editor);
+  const currentFilePath = useStore(currentFilePathStore);
 
-export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, currentFilePath }: MenuParams) => {
   const onRename: RenameHandler<Entity> = ({ name, node }) => {
     const parent = (node.parent == null || node.parent.isRoot) ? workDir.dir : node.parent.data.object as Directory;
 
@@ -30,11 +32,10 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
       }
       parent.contents[name] = node.data.object;
       delete parent.contents[node.data.name];
-
-      updateTreeData();
+      refreshTreeData();
 
       setTimeout(() => {
-        setCurrentNodeId(node.id);
+        $editorVersion.set($editorVersion.get() + 1);
       }, 20);
     }
   };
@@ -46,13 +47,13 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
     parent.contents[name] = object;
     const id = nanoid();
     idsMap.set(object, id);
-    updateTreeData();
+    refreshTreeData();
     return { id, name, object };
   };
 
   const onDelete: DeleteHandler<Entity> = ({ ids }) => {
     ids.forEach((id) => {
-      const node = treeRef.current?.get(id);
+      const node = tree?.get(id);
       if (node) {
         const parent = (node.parent == null || node.parent.isRoot) ? workDir.dir : node.parent.data.object as Directory;
         delete parent.contents[node.data.name];
@@ -61,27 +62,15 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
         }
       }
     });
-    updateTreeData();
+    refreshTreeData();
   };
 
-  const downloadZip = () => {
-    const zip = new JSZip();
-    const addFile = (dir: Directory, path: string) => {
-      Object.entries(dir.contents).forEach(([name, file]) => {
-        if (file instanceof Directory) {
-          addFile(file, `${path}/${name}`);
-        } else {
-          zip.file(`${path}/${name}`, decode((file as File).data));
-        }
-      });
-    };
-    addFile(workDir.dir, "");
-    zip.generateAsync({ type: "blob" }).then((blob) => {
-      saveAs(blob, "runruby.zip");
-    });
-  };
-
-  const { dbSize, clearCache } = useDBCacheInfo();
+  const treeRefSet = useRef(false);
+  const setTreeRef = useCallback((tree: TreeApi<Entity>) => {
+    if (treeRefSet.current) return;
+    treeRefSet.current = true;
+    setTree(tree);
+  }, []);
 
   return (
     <>
@@ -89,20 +78,20 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
         <label className={cs.menuLabel}>Files</label>
         <button
           className={cs.menuButton}
-          onClick={() => downloadZip()}
+          onClick={downloadZip}
           title="Download as .zip"
         >
           <VscFileZip />
         </button>
         <button
           className={cs.menuButton}
-          onClick={() => treeRef.current?.createInternal()}
+          onClick={() => tree?.createInternal()}
           title="New Folder..."
         >
           <VscNewFolder />
         </button>
         <button className={cs.menuButton}
-                onClick={() => treeRef.current?.createLeaf()} title="New File...">
+                onClick={() => tree?.createLeaf()} title="New File...">
           <VscNewFile />
         </button>
       </div>
@@ -110,7 +99,7 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
         openByDefault={false}
         data={treeData}
         childrenAccessor={({ object }) => (object instanceof Directory) ? sortChildren(object) : null}
-        ref={treeRef}
+        ref={setTreeRef as never}
         disableDrag={true}
         disableDrop={true}
         onRename={onRename}
@@ -124,24 +113,6 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
       >
         {Node}
       </Tree>
-      <div className={cs.cacheInfo}>
-        <label className={cs.cacheInfoLabel}>
-          Gems Cache Size
-        </label>
-        <div className={cs.cacheInfoContent}>
-          {dbSize.current.error !== undefined ? (
-            <div>Error: {dbSize.current.error}</div>
-          ) : (
-            <>
-              <div>
-                Usage: {formatBytes(dbSize.current?.usage || 0)}
-              </div>
-              <button className={cs.clearCacheButton} onClick={clearCache}>Clear Cache
-              </button>
-            </>
-          )}
-        </div>
-      </div>
     </>
   );
 };

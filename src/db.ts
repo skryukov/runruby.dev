@@ -1,9 +1,9 @@
 import Dexie, { Table } from "dexie";
-import { File, Directory, SyncOPFSFile } from "@bjorn3/browser_wasi_shim";
+import { File, Directory } from "@bjorn3/browser_wasi_shim";
 
 export interface FS {
   key: string;
-  data: { [key: string]: File | Directory | SyncOPFSFile; };
+  data: DirectoryContents;
 }
 
 export class MySubClassedDexie extends Dexie {
@@ -19,13 +19,13 @@ export class MySubClassedDexie extends Dexie {
 
 export const db = new MySubClassedDexie();
 
-interface MarshaledFile {
+export interface MarshaledFile {
   data: Uint8Array;
 }
 export interface DirectoryContents {
   [key: string]: MarshaledDirectory | MarshaledFile;
 }
-interface MarshaledDirectory {
+export interface MarshaledDirectory {
   contents: DirectoryContents;
 }
 

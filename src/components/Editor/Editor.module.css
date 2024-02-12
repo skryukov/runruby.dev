@@ -39,7 +39,7 @@
 }
 
 .installButton {
-    background-color: #7D2E45;
+    background-color: #044b7f;
     border: none;
     color: #f1f1f1;
     font-weight: bold;
@@ -53,7 +53,7 @@
 }
 
 .installButton:hover {
-    background-color: #6D2136;
+    background-color: #003d6b;
 }
 
 .runButton {

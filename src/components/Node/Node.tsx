@@ -23,7 +23,7 @@ function submitNodeName(node: NodeApi<Entity>, value: string) {
   }
 }
 
-const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity>) => {
+export const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity>) => {
   return (
     <div
       className={`${cs.nodeContainer} ${node.isSelected ? cs.isSelected : ""}`}
@@ -88,5 +88,3 @@ const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity>) => {
     </div>
   );
 };
-
-export default Node;

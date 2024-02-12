@@ -1,0 +1,17 @@
+.about {
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.about code {
+  color: #f66;
+}
+
+.about ul {
+    padding: 0;
+}
+.about ul li {
+    margin-bottom: 8px;
+
+}
+

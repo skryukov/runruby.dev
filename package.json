@@ -12,6 +12,7 @@
   "dependencies": {
     "@bjorn3/browser_wasi_shim": "^0.2.19",
     "@monaco-editor/react": "^4.4.4",
+    "@nanostores/react": "^0.7.1",
     "@ruby/3.3-wasm-wasi": "^2.5.0",
     "@ruby/wasm-wasi": "^2.5.0",
     "dexie": "^3.2.5",
@@ -19,10 +20,12 @@
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "nanoid": "^5.0.5",
+    "nanostores": "^0.9.5",
     "react": "^18.2.0",
     "react-arborist": "^3.4.0",
     "react-dom": "^18.2.0",
-    "react-icons": "^5.0.1"
+    "react-icons": "^5.0.1",
+    "strip-ansi": "^7.1.0"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",

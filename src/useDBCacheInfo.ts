@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
 import { db } from "./db.ts";
+import { refreshCacheInfo } from "./stores/cache.ts";
 
 export const formatBytes = (bytes: number, decimals = 2) => {
   if (!+bytes) return '0 Bytes'
@@ -13,25 +13,7 @@ export const formatBytes = (bytes: number, decimals = 2) => {
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }
 
-export const useDBCacheInfo = () => {
-
-  const dbSize = useRef<{ error?: string, quota?: number, usage?: number}>({ error: "Loading..."});
-
-  useEffect(() => {
-    if (navigator.storage && navigator.storage.estimate) {
-      navigator.storage.estimate().then((estimation) => {
-        dbSize.current = { quota: estimation.quota, usage: estimation.usage };
-      })
-    } else {
-      dbSize.current = { error: "StorageManager not found" };
-    }
-  }, [dbSize]);
-
-  const clearCache = async () => {
-    await db.fsCache.clear();
-    dbSize.current = {};
-  }
-
-  return {dbSize, clearCache}
-
+export const clearCache = async () => {
+  await db.fsCache.clear();
+  refreshCacheInfo();
 }
