@@ -10,6 +10,7 @@ import { decode, encode, workDir } from "../../engines/wasi/editorFS.ts";
 import Node from "../Node/Node.tsx";
 import { Entity, getPath, idsMap, sortChildren } from "../../fsMap.ts";
 import cs from "../Menu/Menu.module.css";
+import { formatBytes, useDBCacheInfo } from "../../useDBCacheInfo.ts";
 
 type MenuParams = {
   updateTreeData: () => void;
@@ -80,6 +81,8 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
     });
   };
 
+  const { dbSize, clearCache } = useDBCacheInfo();
+
   return (
     <>
       <div className={cs.menuHead}>
@@ -121,6 +124,24 @@ export const Menu = ({ updateTreeData, setCurrentNodeId, treeRef, treeData, curr
       >
         {Node}
       </Tree>
+      <div className={cs.cacheInfo}>
+        <label className={cs.cacheInfoLabel}>
+          Gems Cache Size
+        </label>
+        <div className={cs.cacheInfoContent}>
+          {dbSize.current.error !== undefined ? (
+            <div>Error: {dbSize.current.error}</div>
+          ) : (
+            <>
+              <div>
+                Usage: {formatBytes(dbSize.current?.usage || 0)}
+              </div>
+              <button className={cs.clearCacheButton} onClick={clearCache}>Clear Cache
+              </button>
+            </>
+          )}
+        </div>
+      </div>
     </>
   );
 };

@@ -11,11 +11,14 @@ const wasmModulePromise = fetch(wasmUrl).then((response) => WebAssembly.compileS
 
 const rubyStubsPath = "/usr/local/lib/ruby_gems";
 
+export const gemsDir = new PreopenDirectory("/gems", {});
+export const bundleDir = new PreopenDirectory("/.bundle", {});
+
 const dirFds = [
   workDir,
   generateRubyStubsDir(rubyStubsPath),
-  new PreopenDirectory("/.bundle", {}),
-  new PreopenDirectory("/gems", {})
+  bundleDir,
+  gemsDir
 ];
 
 async function createRuby(setStdout: TSetString, setStderr: TSetString) {

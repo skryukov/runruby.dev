@@ -1,12 +1,20 @@
 .menu {
     grid-area: menu;
     padding: 16px 8px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+    box-sizing: border-box;
 }
 
 .editor {
     grid-area: editor;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+    box-sizing: border-box;
     border-radius: 16px;
     background-color: #1e1e1e;
     padding: 16px 0px;
@@ -21,4 +29,7 @@
     margin: 0 4px;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    max-height: 100vh;
+    box-sizing: border-box;
 }

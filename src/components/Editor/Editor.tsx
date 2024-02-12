@@ -10,6 +10,8 @@ import { OutputTab } from "../Output/Output.tsx";
 import { Entity } from "../../fsMap.ts";
 import { RunVMParams } from "../../useVM.ts";
 import cs from "./Editor.module.css";
+import { db } from "../../db.ts";
+import { bundleDir, gemsDir } from "../../engines/wasi/wasi.ts";
 
 type EditorProps = {
   loading: boolean;
@@ -96,6 +98,16 @@ export const Editor = ({
         },
         onSuccess: () => {
           setOutputTab("result");
+          db.fsCache.clear().then(() => {
+            db.fsCache.add({
+              key: "gemsDir",
+              data: gemsDir.dir.contents
+            });
+            db.fsCache.add({
+              key: "bundleDir",
+              data: bundleDir.dir.contents
+            });
+          })
         }, onError: () => {
           setOutputTab("logs");
         },
