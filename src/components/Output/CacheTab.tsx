@@ -5,6 +5,7 @@ import { $cache } from "../../stores/cache.ts";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db, DirectoryContents, MarshaledDirectory } from "../../db.ts";
 import { useMemo } from "react";
+import { VscInfo } from "react-icons/vsc";
 
 function findDirectory(dir: DirectoryContents, s: string) {
   const parts = s.split("/");
@@ -31,13 +32,13 @@ export const CacheTab = () => {
   const cache = useStore($cache);
 
   const gemsDirContent = useLiveQuery(
-    () => db.fsCache.get({key: "gemsDir"}),
+    () => db.fsCache.get({ key: "gemsDir" }),
     []
   );
 
   const installedGemsDir = useMemo(() => (
-    typeof gemsDirContent === 'object' && ("data" in gemsDirContent) && findDirectory(gemsDirContent.data, "ruby/3.3.0/gems")
-  ),[gemsDirContent])
+    typeof gemsDirContent === "object" && ("data" in gemsDirContent) && findDirectory(gemsDirContent.data, "ruby/3.3.0/gems")
+  ), [gemsDirContent]);
 
 
   const gems = Object.keys(installedGemsDir || {}).map((gem) => {
@@ -79,9 +80,16 @@ export const CacheTab = () => {
         ) : (
           <>
             <div>
-              Calculated usage: {formatBytes(cache.info?.usage || 0)}
+              Estimated usage: {formatBytes(cache.info?.usage || 0)}/{formatBytes(cache.info?.quota || 0)}
+              <div className={cs.tooltip}>
+                <VscInfo />
+                <span className={cs.tooltiptext}>
+                  Storage space might not be immediately reclaimed after deleting data due to the browser's internal garbage collection processes.
+                </span>
+              </div>
             </div>
-            <button className={`${cs.clearCacheButton} ${canRunCacheClear ? "" : cs.buttonDisabled}`} onClick={clearCache}>Clear Cache
+            <button className={`${cs.clearCacheButton} ${canRunCacheClear ? "" : cs.buttonDisabled}`}
+                    onClick={clearCache}>Clear Cache
             </button>
           </>
         )}
