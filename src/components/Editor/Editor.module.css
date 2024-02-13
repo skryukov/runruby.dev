@@ -14,7 +14,7 @@
 }
 
 .editorLabel {
-    font-size: 16px;
+    font-size: 14px;
     color: #f1f1f1;
     font-weight: bold;
     padding: 8px 16px;
@@ -28,7 +28,7 @@
 }
 
 .editorPlaceholder {
-    font-size: 16px;
+    font-size: 14px;
     padding: 32px 32px;
 }
 
@@ -41,6 +41,7 @@
 .editorLoading {
     padding: 0 16px;
     display: inline-block;
+    font-size: 14px;
 }
 
 .installButton {
@@ -52,7 +53,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 14px;
+    font-size: 12px;
     cursor: default;
     border-radius: 8px;
 }
@@ -70,7 +71,7 @@
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 14px;
+    font-size: 12px;
     cursor: default;
     border-radius: 8px;
     margin-left: 8px;

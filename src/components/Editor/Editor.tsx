@@ -186,6 +186,7 @@ export const Editor = ({
                 setInitializing(false);
               }}
               options={{
+                fontFamily: "Martian Mono, monospace",
                 automaticLayout: true,
                 wordWrap: "on",
                 minimap: { enabled: false },
