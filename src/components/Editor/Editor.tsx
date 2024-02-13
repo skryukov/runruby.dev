@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Directory, File } from "@bjorn3/browser_wasi_shim";
 import MonacoEditor from "@monaco-editor/react";
+import { useResizeDetector } from "react-resize-detector";
+import {editor} from "monaco-editor";
 
 import { decode, encode, gemFromURI, gistFromURI, workDir } from "../../engines/wasi/editorFS.ts";
 
@@ -150,8 +152,19 @@ export const Editor = ({
     }
   };
 
+  const editorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const {ref, width, height} = useResizeDetector({
+    refreshMode: "debounce",
+    refreshRate: 200,
+    onResize: () => {
+      if (editorRef.current && width && height) {
+        editorRef.current.layout({width: width - 16, height: height - 112});
+      }
+    }
+  });
+
   return (
-    <>
+    <div ref={ref} className={cs.editorContainer}>
       <div className={cs.editorHeader}>
         {currentFilePath && <label className={cs.editorLabel}>{currentFilePath}</label>}
       </div>
@@ -166,10 +179,14 @@ export const Editor = ({
               path={currentFilePath}
               defaultValue={decode(currentFile.data)}
               onChange={handleEditorChange}
-              onMount={() => {
+              onMount={(e) => {
+                if (!editorRef.current) {
+                  editorRef.current = e;
+                }
                 setInitializing(false);
               }}
               options={{
+                automaticLayout: true,
                 wordWrap: "on",
                 minimap: { enabled: false },
                 overviewRulerBorder: false,
@@ -200,6 +217,6 @@ export const Editor = ({
           Run code
         </button>
       </div>
-    </>
+    </div>
   );
 };

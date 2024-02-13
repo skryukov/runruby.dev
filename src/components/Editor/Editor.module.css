@@ -1,8 +1,14 @@
+.editorContainer {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 .editorHeader {
     display: flex;
     flex-direction: row;
-    padding: 0 16px 0 16px;
-    margin-bottom: 16px;
+    padding: 0 16px 16px 16px;
     align-items: center;
     justify-content: space-between;
 }
@@ -28,7 +34,6 @@
 
 .editorFooter {
     padding: 16px 16px 0;
-    margin-top: 8px;
     text-align: right;
     border-top: 0.5px #ffffff14 solid;
 }

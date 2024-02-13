@@ -1,13 +1,16 @@
 .container {
     display: grid;
-    grid-template-rows: 56px 1fr;
-    grid-template-columns: 0.75fr 1fr 1fr 1.5fr;
+    grid-template-rows: 56px auto;
+    grid-template-columns: 300px minmax(150px, 1fr) minmax(150px, 1fr) 1.5fr;
     grid-template-areas:
     "header header header header"
     "menu editor editor output";
     background-color: #1a1a1a;
     height: 100vh;
+    max-height: 100vh;
     width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .header {
