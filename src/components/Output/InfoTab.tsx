@@ -14,8 +14,8 @@ export const InfoTab = () => {
           browser.
         </li>
         <li>
-          <strong>Bundler Support</strong>: Add a Gemfile to your project and click "Bundle Install". The absence of
-          native networking in WebAssembly is not a problem.
+          <strong>Bundler Support</strong>: Add a <code>Gemfile</code> to your project and click "Bundle Install". The absence of
+          native networking in WASI is not a problem.
         </li>
         <li>
           <strong>Networking</strong>: For networking, try using <code>Faraday</code> with
@@ -23,7 +23,7 @@ export const InfoTab = () => {
         </li>
         <li>
           <strong>Quick start</strong>: Access gems or gists quickly
-          with <code>runruby.dev/{"{"}gem_name{"}"}</code> or <code>runruby.dev/gist/{"{"}id{"}"}</code> URLs.
+          with <code>runruby.dev/{"{"}gem_name{"}"}</code> and <code>runruby.dev/gist/{"{"}id{"}"}</code> URLs.
         </li>
         <li>
           <strong>Gems Caching</strong>: Take advantage of the browser's cache to prevent re-downloading gems, enhancing

@@ -8,21 +8,16 @@
 }
 
 .cacheInfoLabel {
-    margin-top: 16px;
+    margin: 16px 0;
     font-size: 14px;
     font-weight: bold;
     display: inline-block;
     color: #f1f1f1;
-}
-
-.cacheInfoContent {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 40px;
+    height: auto;
 }
 
 .clearCacheButton {
+    margin-left: 16px;
     padding: 4px 8px;
     border: none;
     background: #7D2E45;
@@ -31,6 +26,7 @@
     cursor: default;
     font-size: 11px;
     font-weight: bold;
+    line-height: 16px;
 }
 
 .clearCacheButton:hover {
@@ -72,7 +68,7 @@
     z-index: 1;
 
     bottom: 20px;
-    left: -156px;
+    right: 0;
 }
 
 .tooltip:hover .tooltiptext {
