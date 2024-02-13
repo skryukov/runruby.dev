@@ -55,3 +55,9 @@ Bundler::Fetcher.prepend(Module.new do
     JS::Connection.new
   end
 end)
+
+Bundler::StubSpecification.prepend(Module.new do
+ def missing_extensions?
+    false
+  end
+end)

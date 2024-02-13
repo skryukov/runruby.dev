@@ -46,7 +46,9 @@ export const Editor = ({
 
     runVM({
       code: `
-      ${canRunBundleInstall ? "require 'bundler/setup'" : ""}
+      ${canRunBundleInstall ? `require "rubygems_stub"
+        require "bundler_stub"
+        require "bundler/setup"` : ""}
       eval(<<~'CODE', binding, '${currentFilePath}', 1)
        ${code}
       CODE
