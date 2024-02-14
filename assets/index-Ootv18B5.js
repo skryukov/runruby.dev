@@ -330,7 +330,7 @@ user = client.user("matz")
 
 # And it just works 🚀
 {login: user.login, name: user.name, company: user.company}
-`,om=()=>{const e=new URL(window.location.href),n=new URLSearchParams(e.search).get("defaultCode");return n?decodeURIComponent(atob(n)):void 0},lm=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("embed")},mp=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("gem")},Ss=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("gist")},_s=mp()||vp,yp=`# This is a Ruby WASI playground
+`,om=()=>{const e=new URL(window.location.href),n=new URLSearchParams(e.search).get("initialCode");return n?decodeURIComponent(atob(n)):void 0},lm=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("embed")},mp=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("gem")},Ss=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("gist")},_s=mp()||vp,yp=`# This is a Ruby WASI playground
 # You can run any Ruby code here and see the result
 # You can also install gems using Gemfile an the "Bundle install" button.
 
