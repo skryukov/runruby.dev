@@ -2,7 +2,13 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Directory, File } from "@bjorn3/browser_wasi_shim";
 import MonacoEditor from "@monaco-editor/react";
 
-import { decode, encode, gemFromURI, gistFromURI, workDir } from "../../engines/wasi/editorFS.ts";
+import {
+  decode, embedFromURI,
+  encode,
+  gemFromURI,
+  gistFromURI,
+  workDir
+} from "../../engines/wasi/editorFS.ts";
 
 import importFromGist from "../../gist.ts";
 import { RunVMParams } from "../../useVM.ts";
@@ -20,7 +26,7 @@ type EditorProps = {
 }
 export const Editor = ({
                          loading: VMRunning,
-                         runVM,
+                         runVM
                        }: EditorProps) => {
   const [editorInitializing, setInitializing] = useState(true);
   const bundleInstalled = useRef(false);
@@ -58,7 +64,7 @@ export const Editor = ({
         openTab("logs");
       }, onError: () => {
         openTab("logs");
-      },
+      }
     });
   }, [canRunBundleInstall, code, currentFilePath, runVM]);
 
@@ -90,7 +96,7 @@ export const Editor = ({
               data: bundleDir.dir.contents as never
             });
             refreshCacheInfo();
-          })
+          });
         }, onError: () => {
           openTab("logs");
         },
@@ -139,7 +145,7 @@ export const Editor = ({
     if (editorInitializing) {
       activateFirstFile();
     } else if (!bundleInstalled.current) {
-      (gemFromURI() || gistFromURI()) && canRunBundleInstall && bundleInstall();
+      ((gemFromURI() || gistFromURI()) && !embedFromURI()) && canRunBundleInstall && bundleInstall();
       bundleInstalled.current = true;
     }
   }, [activateFirstFile, bundleInstall, canRunBundleInstall, editorInitializing]);

@@ -16,6 +16,20 @@ user = client.user("matz")
 {login: user.login, name: user.name, company: user.company}
 `;
 
+export const initialCodeFromURI = () => {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  const base64code = params.get("initialCode");
+  return base64code ? decodeURIComponent(atob(base64code)) : undefined;
+}
+
+export const embedFromURI = () => {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  return params.get("embed");
+}
+
+
 export const gemFromURI = () => {
   const url = new URL(window.location.href);
   const params = new URLSearchParams(url.search);
@@ -30,7 +44,7 @@ export const gistFromURI = () => {
 
 const defaultGem = gemFromURI() || gem;
 
-export const initialRubyCode = `# This is a Ruby WASI playground
+const defaultCode = `# This is a Ruby WASI playground
 # You can run any Ruby code here and see the result
 # You can also install gems using Gemfile an the "Bundle install" button.
 
@@ -41,6 +55,8 @@ const initialGemfile = `source "https://rubygems.org"
 
 gem "${defaultGem}"
 `;
+
+const initialCode = initialCodeFromURI() || defaultCode;
 
 export const encode = (() => {
   const encoder = new TextEncoder();
@@ -54,6 +70,6 @@ export const decode = (() => {
 
 export const workDir = new PreopenDirectory("/", gistFromURI() ? {} : {
   "Gemfile": new File(encode(initialGemfile)),
-  "main.rb": new File(encode(initialRubyCode)),
+  "main.rb": new File(encode(initialCode ?? defaultCode)),
 });
 
