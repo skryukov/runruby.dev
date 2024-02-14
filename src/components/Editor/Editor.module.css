@@ -1,86 +1,91 @@
 .editorContainer {
-    height: 100%;
-    max-height: 100%;
-    display: flex;
-    flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .editorHeader {
-    display: flex;
-    flex-direction: row;
-    padding: 0 16px 16px 16px;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  flex-direction: row;
+  padding: 0 16px 16px 16px;
+  align-items: center;
+  justify-content: space-between;
+  height: 50px;
 }
 
 .editorLabel {
-    font-size: 14px;
-    color: #f1f1f1;
-    font-weight: bold;
-    padding: 8px 16px;
-    border-radius: 8px;
-    background-color: #424242;
+  font-size: 14px;
+  color: #f1f1f1;
+  font-weight: bold;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #424242;
 }
 
 .editorText {
-    padding: 0 8px;
-    flex: 1;
+  padding: 0 8px;
+  flex: 1;
+  height: 100%;
+  max-height: calc(100vh - 170px);
+  overflow: hidden;
 }
 
 .editorPlaceholder {
-    font-size: 14px;
-    padding: 32px 32px;
+  font-size: 14px;
+  padding: 32px 32px;
 }
 
 .editorFooter {
-    padding: 16px 16px 0;
-    text-align: right;
-    border-top: 0.5px #ffffff14 solid;
+  padding: 16px 16px 0 16px;
+  text-align: right;
+  height: 50px;
+  border-top: 0.5px #ffffff14 solid;
 }
 
 .editorLoading {
-    padding: 0 16px;
-    display: inline-block;
-    font-size: 14px;
+  padding: 0 16px;
+  display: inline-block;
+  font-size: 14px;
 }
 
 .installButton {
-    background-color: #044b7f;
-    border: none;
-    color: #f1f1f1;
-    font-weight: bold;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 12px;
-    cursor: default;
-    border-radius: 8px;
+  background-color: #044b7f;
+  border: none;
+  color: #f1f1f1;
+  font-weight: bold;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: default;
+  border-radius: 8px;
 }
 
 .installButton:hover {
-    background-color: #003d6b;
+  background-color: #003d6b;
 }
 
 .runButton {
-    background-color: #388E3C;
-    border: none;
-    color: #f1f1f1;
-    font-weight: bold;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 12px;
-    cursor: default;
-    border-radius: 8px;
-    margin-left: 8px;
+  background-color: #388E3C;
+  border: none;
+  color: #f1f1f1;
+  font-weight: bold;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: default;
+  border-radius: 8px;
+  margin-left: 8px;
 }
 
 .runButton:hover {
-    background-color: #2E7D32;
+  background-color: #2E7D32;
 }
 
 .buttonDisabled {
-    background-color: #424242 !important;
+  background-color: #424242 !important;
 }

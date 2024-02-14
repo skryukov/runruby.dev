@@ -1,36 +1,88 @@
+.content {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  overflow: hidden;
+  max-width: 100vw;
+}
+
 .menu {
-    grid-area: menu;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    max-height: 100vh;
-    box-sizing: border-box;
-    max-width: 300px;
-    overflow-x: scroll;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  max-width: 300px;
+  height: calc(100vh - 56px);
+  background-color: #1a1a1a;
+
+  margin: 0;
+  padding: 16px 0;
+  z-index: 10;
+}
+
+@media (max-width: 1280px) {
+  .menu {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    z-index: 1;
+    position: fixed;
+  }
+
+  .menu.menuOpen {
+    width: 300px;
+    padding: 16px;
+    height: calc(100vh - 56px);
+  }
+}
+
+.menuShadow {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 100vw;
+  height: calc(100vh - 56px);
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 1;
 }
 
 .editor {
-    grid-area: editor;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    border-radius: 16px;
-    background-color: #1e1e1e;
-    padding: 16px 0px;
-    margin: 0 4px;
-    height: calc(100vh - 56px); /* 56px is the height of the .header */
-    max-height: calc(100vh - 56px); /* 56px is the height of the .header */
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background-color: #1e1e1e;
+  padding: 16px 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  flex: 3;
 }
 
 .output {
-    grid-area: output;
-    background-color: #1e1e1e;
-    border-radius: 16px;
-    padding: 16px 8px;
-    margin: 0 4px;
-    display: flex;
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  padding: 16px 8px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  max-height: 100vh;
+  flex: 2;
+  overflow: hidden;
+}
+
+
+@media (max-width: 860px) {
+  .content {
     flex-direction: column;
-    height: 100%;
-    max-height: 100%;
-    box-sizing: border-box;
+  }
+
+  .editor {
+    flex: 4;
+  }
 }

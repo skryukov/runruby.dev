@@ -1,6 +1,10 @@
 .about {
-    font-size: 14px;
-    line-height: 1.4;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.about p {
+  margin: 8px 0 16px;
 }
 
 .about code {
@@ -8,10 +12,10 @@
 }
 
 .about ul {
-    padding: 0;
+  padding: 0;
 }
-.about ul li {
-    margin-bottom: 8px;
 
+.about ul li {
+  margin-bottom: 8px;
 }
 

@@ -96,6 +96,7 @@ export const Menu = () => {
         </button>
       </div>
       <Tree
+        width="100%"
         openByDefault={false}
         data={treeData}
         childrenAccessor={({ object }) => (object instanceof Directory) ? sortChildren(object) : null}

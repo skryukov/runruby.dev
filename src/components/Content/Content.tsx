@@ -8,6 +8,8 @@ import { Menu } from "../Menu/Menu.tsx";
 import cs from "./Content.module.css";
 import { db, DirectoryContents, mapToEntities } from "../../db.ts";
 import { bundleDir, gemsDir } from "../../engines/wasi/wasi.ts";
+import { $menu, toggleMenu } from "../../stores/menu.ts";
+import { useStore } from "@nanostores/react";
 
 export const Content = () => {
   const { loading, log, result, runVM } = useVM();
@@ -30,12 +32,14 @@ export const Content = () => {
     }
   }, [gemsDirContent, bundleDirContent, populatedGemsDir]);
 
+  const menuIsOpen = useStore($menu).isOpen;
+
   return (
-    <>
-      <div className={cs.menu}>
+    <div className={cs.content}>
+      {menuIsOpen ? (<div className={cs.menuShadow} onClick={toggleMenu}></div>) : null}
+      <div className={`${cs.menu} ${menuIsOpen ? cs.menuOpen : ''}`}>
         <Menu />
       </div>
-
       <div className={cs.editor}>
         <Editor
           loading={loading}
@@ -48,7 +52,7 @@ export const Content = () => {
           result={result}
         />
       </div>
-    </>
+    </div>
   );
 };
 

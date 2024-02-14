@@ -1,116 +1,116 @@
 .nodeContainer,
 .nodeContent {
-    display: flex;
-    height: 100%;
-    align-items: center;
-    width: 100%;
-    box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .nodeContent {
-    cursor: default;
+  cursor: default;
 }
 
 .nodeContent span.arrow {
-    width: 20px;
-    font-size: 20px;
-    display: flex;
+  width: 20px;
+  font-size: 20px;
+  display: flex;
 }
 
 .fileFolderIcon {
-    margin-left: 16px;
-    margin-right: 8px;
-    display: flex;
-    align-items: center;
-    font-size: 20px;
+  margin-left: 16px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
 }
 
 .nodeContent span.nodeText {
-    flex: 1;
-    font-size: 14px;
+  flex: 1;
+  font-size: 14px;
 }
 
 .nodeContent input[type="text"] {
-    padding: 0;
-    outline: none;
-    color: #f1f1f1;
-    border-radius: 2px;
-    font-size: 14px;
+  padding: 0;
+  outline: none;
+  color: #f1f1f1;
+  border-radius: 2px;
+  font-size: 14px;
 }
 
 .nodeContent input[type="text"] {
-    width: 97%;
-    border: 1px solid #878787;
-    background: transparent;
-    height: 22px;
+  width: 97%;
+  border: 1px solid #878787;
+  background: transparent;
+  height: 22px;
 }
 
 .fileActions {
-    height: 100%;
-    display: flex;
-    position: absolute;
-    right: 0;
-    /*height: 18px;*/
+  height: 100%;
+  display: flex;
+  position: absolute;
+  right: 0;
+  /*height: 18px;*/
 }
 
 
 [role="treeitem"]:hover .nodeContainer.isSelected .fileActions {
-    background: #343434;
-    color: #f1f1f1;
+  background: #343434;
+  color: #f1f1f1;
 }
 
 [role="treeitem"]:hover .fileActions {
-    background: #202020;
-    color: #f1f1f1;
+  background: #202020;
+  color: #f1f1f1;
 }
 
 .fileActions button {
-    cursor: default;
+  cursor: default;
 }
 
 .folderFileActions {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .folderFileActions button {
-    display: flex;
-    align-items: center;
-    color: #424242;
-    background-color: inherit;
-    border: none;
-    font-size: 14px;
-    height: 100%;
-    padding: 0 4px;
-    margin: 0;
+  display: flex;
+  align-items: center;
+  color: #424242;
+  background-color: inherit;
+  border: none;
+  font-size: 14px;
+  height: 100%;
+  padding: 0 4px;
+  margin: 0;
 }
 
 .folderFileActions button:hover {
-    color: #f1f1f1;
+  color: #f1f1f1;
 }
 
 .nodeContainer .fileActions .folderFileActions {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .nodeContainer:hover .fileActions .folderFileActions {
-    visibility: visible;
+  visibility: visible;
 }
 
 .nodeContainer.isSelected {
-    background: #343434;
-    color: #f1f1f1;
-    border-radius: 0;
+  background: #343434;
+  color: #f1f1f1;
+  border-radius: 0;
 }
 
 [role="treeitem"]:hover {
-    background: #202020;
-    color: #f1f1f1;
+  background: #202020;
+  color: #f1f1f1;
 }
 
 [role="treeitem"]:focus-within {
-    background-color: rgba(52, 52, 52, 0.4);
-    outline: none;
+  background-color: rgba(52, 52, 52, 0.4);
+  outline: none;
 }
 
