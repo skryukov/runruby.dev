@@ -44,9 +44,19 @@
 }
 
 .editorLoading {
-  padding: 0 16px;
-  display: inline-block;
-  font-size: 14px;
+  margin: 0 16px;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.editorLoading svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .installButton {

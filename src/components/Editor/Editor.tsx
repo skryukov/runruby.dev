@@ -26,6 +26,7 @@ import {
 import { useEditorTheme } from "../../useEditorTheme.ts";
 
 import cs from "./Editor.module.css";
+import { VscLoading } from "react-icons/vsc";
 
 type EditorProps = {
   loading: boolean;
@@ -207,7 +208,7 @@ export const Editor = ({
       </div>
       <div className={cs.editorFooter}>
         <div className={cs.editorLoading}>
-          {loading && "loading..."}
+          {loading && <VscLoading size={20}/>}
         </div>
         <button className={`${cs.installButton} ${canRunBundleInstall ? "" : cs.buttonDisabled}`}
                 disabled={!canRunBundleInstall}
