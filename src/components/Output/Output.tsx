@@ -3,11 +3,13 @@ import stripAnsi from "strip-ansi";
 import { useStore } from "@nanostores/react";
 import { useMemo } from "react";
 
-import cs from "./Output.module.css";
+import { useEditorTheme } from "../../useEditorTheme.ts";
 import { $output, openTab } from "../../stores/output.ts";
+
 import { CacheTab } from "./CacheTab.tsx";
 import { InfoTab } from "./InfoTab.tsx";
-import { useMediaQuery } from "react-responsive";
+import cs from "./Output.module.css";
+
 
 export const Output = ({ result, log }: {
   result: string,
@@ -25,10 +27,7 @@ export const Output = ({ result, log }: {
     }
     return v;
   }, [log, result]);
-
-  const darkTheme = useMediaQuery({
-    query: "(prefers-color-scheme: dark)"
-  });
+  const theme = useEditorTheme();
 
   return (
     <>
@@ -52,7 +51,7 @@ export const Output = ({ result, log }: {
             <MonacoEditor
               height="100%"
               width="100%"
-              theme={darkTheme ? "vs-dark" : "light"}
+              theme={theme}
               value={value}
               language="shell"
               options={{

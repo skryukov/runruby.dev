@@ -14,7 +14,8 @@ export const InfoTab = () => {
           browser.
         </li>
         <li>
-          <strong>Bundler Support</strong>: Add a <code>Gemfile</code> to your project and click "Bundle Install". The absence of
+          <strong>Bundler Support</strong>: Add a <code>Gemfile</code> to your project and click "Bundle Install". The
+          absence of
           native networking in WASI is not a problem.
         </li>
         <li>
@@ -28,6 +29,11 @@ export const InfoTab = () => {
         <li>
           <strong>Gems Caching</strong>: Take advantage of the browser's cache to prevent re-downloading gems, enhancing
           efficiency.
+        </li>
+        <li>
+          <strong>Source code</strong>: <a className={cs.link} href="https://github.com/skryukov/runruby.dev">
+          skryukov/runruby.dev
+        </a>
         </li>
       </ul>
     </div>

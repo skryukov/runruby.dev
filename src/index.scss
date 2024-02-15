@@ -1,0 +1,113 @@
+@function light-dark($light, $dark) {
+  @return var(--light, #{ $light }) var(--dark, #{ $dark });
+}
+
+:root {
+  --ON: initial;
+  --OFF: ;
+}
+
+:root, :root[theme='light'] {
+  --light: var(--ON);
+  --dark: var(--OFF);
+}
+
+:root[theme='dark'] {
+  --light: var(--OFF);
+  --dark: var(--ON);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --light: var(--OFF);
+    --dark: var(--ON);
+  }
+}
+
+:root {
+  --primary-color: #{ light-dark(#62c167, #388E3C) };
+  --primary-hover-color: #{ light-dark(#79ca7d, #2E7D32) };
+  --secondary-color: #{ light-dark(#0892f7, #044b7f) };
+  --secondary-hover-color: #{ light-dark(#239ef8, #003d6b) };
+  --danger-color: #{ light-dark(#c74e6e, #7D2E45) };
+  --danger-hover-color: #{ light-dark(#c86a86, #5C1D2E) };
+
+  --tag-color: #{ light-dark(#dadada, #424242) };
+
+  --tree-file-active-color: #{ light-dark(#dadada, #343434) };
+  --tree-file-focus-color: #{ light-dark(#eeeeee, #262728) };
+  --tree-file-hover-color: #{ light-dark(#e2e2e2, #202020) };
+
+  --code-color: #{ light-dark(#F44336, #f66) };
+  --font-color: #{ light-dark(#212121, #f1f1f1) };
+  --link-color: var(--font-color);
+  --link-hover-color: #{ light-dark(#4f4f4f, #c5c5c5) };
+  --content-color: #{ light-dark(#FFFFFF, #1e1e1e) };
+  --bg-color: #{ light-dark(#F5F5F5, #1a1a1a) };
+
+  --menu-icon-color: var(--font-color);
+  --menu-icon-hover-color: var(--tag-color);
+
+  --tree-icon-color: #{ light-dark(#a1a1a1, var(--tag-color)) };
+  --tree-icon-hover-color: #{ light-dark(#212121, var(--font-color)) };
+
+  --transparent-black-color: rgba(0, 0, 0, 0.75);
+}
+
+:root[theme='dark'] {
+  --primary-color: #388E3C;
+  --primary-hover-color: #2E7D32;
+  --secondary-color: #044b7f;
+  --secondary-hover-color: #003d6b;
+  --danger-color: #7D2E45;
+  --danger-hover-color: #5C1D2E;
+
+  --tag-color: #424242;
+
+  --tree-file-active-color: #343434;
+  --tree-file-focus-color: #262728;
+  --tree-file-hover-color: #202020;
+
+  --code-color: #f66;
+  --font-color: #f1f1f1;
+  --link-color: var(--font-color);
+  --link-hover-color: #c5c5c5;
+  --content-color: #1e1e1e;
+  --bg-color: #1a1a1a;
+
+  --transparent-black-color: rgba(0, 0, 0, 0.75);
+
+  --menu-icon-color: var(--font-color);
+  --menu-icon-hover-color: var(--tag-color);
+
+  --tree-icon-color: var(--tag-color);
+  --tree-icon-hover-color: var(--font-color);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  background-color: var(--content-color);
+  color: var(--font-color);
+}
+
+a, body, code, button, input {
+  font-family: "Martian Mono", Menlo, Monaco, "Courier New", monospace;
+  font-optical-sizing: auto;
+  font-weight: 200;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+code {
+  white-space: pre-wrap;
+  word-break: keep-all;
+}

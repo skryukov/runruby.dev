@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Directory, File } from "@bjorn3/browser_wasi_shim";
 import MonacoEditor from "@monaco-editor/react";
+import { useStore } from "@nanostores/react";
 
 import {
   decode, embedFromURI,
@@ -9,15 +10,12 @@ import {
   gistFromURI,
   workDir
 } from "../../engines/wasi/editorFS.ts";
-
 import importFromGist from "../../gist.ts";
 import { RunVMParams } from "../../useVM.ts";
-import cs from "./Editor.module.css";
 import { db } from "../../db.ts";
 import { bundleDir, gemsDir } from "../../engines/wasi/wasi.ts";
 import { refreshCacheInfo } from "../../stores/cache.ts";
 import { openTab } from "../../stores/output.ts";
-import { useStore } from "@nanostores/react";
 import {
   $editor,
   currentFilePathStore,
@@ -25,7 +23,9 @@ import {
   refreshTreeData,
   setCode
 } from "../../stores/editor.ts";
-import { useMediaQuery } from "react-responsive";
+import { useEditorTheme } from "../../useEditorTheme.ts";
+
+import cs from "./Editor.module.css";
 
 type EditorProps = {
   loading: boolean;
@@ -165,9 +165,7 @@ export const Editor = ({
     }
   };
 
-  const darkTheme = useMediaQuery({
-    query: "(prefers-color-scheme: dark)"
-  });
+  const theme = useEditorTheme();
 
   return (
     <div className={cs.editorContainer}>
@@ -180,7 +178,7 @@ export const Editor = ({
             <MonacoEditor
               height="100%"
               width="100%"
-              theme={darkTheme ? "vs-dark" : "light"}
+              theme={theme}
               defaultLanguage="ruby"
               path={currentFilePath}
               defaultValue={decode(currentFile.data)}

@@ -11,6 +11,17 @@
   color: var(--code-color);
 }
 
+.about a {
+  color: var(--code-color);
+  text-decoration: none;
+  cursor: default;
+}
+
+.about a:hover {
+  text-decoration: underline;
+  cursor: default;
+}
+
 .about ul {
   padding: 0;
 }
