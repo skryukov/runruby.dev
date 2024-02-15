@@ -1,7 +1,7 @@
 import { VscClose, VscMenu } from "react-icons/vsc";
 import { useStore } from "@nanostores/react";
 
-import { $menu } from "../../stores/menu.ts";
+import { $menu, toggleMenu } from "../../stores/menu.ts";
 import cs from "./Header.module.css";
 import { TbMoon, TbSun, TbSunMoon } from "react-icons/tb";
 import { $theme, toggleTheme } from "../../stores/theme.ts";
@@ -18,7 +18,7 @@ export const Header = () => {
 
   return (
     <header className={cs.header}>
-      <button className={cs.headerMenuButton} onClick={toggleTheme}>
+      <button className={cs.headerMenuButton} onClick={toggleMenu}>
         {isOpen ? <VscClose size={16} /> : <VscMenu size={16} />}
       </button>
 

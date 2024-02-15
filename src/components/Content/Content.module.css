@@ -80,9 +80,16 @@
 @media (max-width: 860px) {
   .content {
     flex-direction: column;
+    gap: 4px;
   }
 
   .editor {
-    flex: 4;
+    flex: 2;
+    padding: 4px 0;
+  }
+
+  .output {
+    flex: 1;
+    padding: 4px;
   }
 }
