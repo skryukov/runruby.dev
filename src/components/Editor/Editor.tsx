@@ -18,7 +18,14 @@ import { bundleDir, gemsDir } from "../../engines/wasi/wasi.ts";
 import { refreshCacheInfo } from "../../stores/cache.ts";
 import { openTab } from "../../stores/output.ts";
 import { useStore } from "@nanostores/react";
-import { $editor, currentFilePathStore, currentFileStore, refreshTreeData, setCode } from "../../stores/editor.ts";
+import {
+  $editor,
+  currentFilePathStore,
+  currentFileStore,
+  refreshTreeData,
+  setCode
+} from "../../stores/editor.ts";
+import { useMediaQuery } from "react-responsive";
 
 type EditorProps = {
   loading: boolean;
@@ -158,6 +165,10 @@ export const Editor = ({
     }
   };
 
+  const darkTheme = useMediaQuery({
+    query: "(prefers-color-scheme: dark)"
+  });
+
   return (
     <div className={cs.editorContainer}>
       <div className={cs.editorHeader}>
@@ -169,7 +180,7 @@ export const Editor = ({
             <MonacoEditor
               height="100%"
               width="100%"
-              theme="vs-dark"
+              theme={darkTheme ? "vs-dark" : "light"}
               defaultLanguage="ruby"
               path={currentFilePath}
               defaultValue={decode(currentFile.data)}

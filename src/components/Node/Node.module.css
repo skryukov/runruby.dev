@@ -33,7 +33,7 @@
 .nodeContent input[type="text"] {
   padding: 0;
   outline: none;
-  color: #f1f1f1;
+  color: var(--font-color);
   border-radius: 2px;
   font-size: 14px;
 }
@@ -50,18 +50,6 @@
   display: flex;
   position: absolute;
   right: 0;
-  /*height: 18px;*/
-}
-
-
-[role="treeitem"]:hover .nodeContainer.isSelected .fileActions {
-  background: #343434;
-  color: #f1f1f1;
-}
-
-[role="treeitem"]:hover .fileActions {
-  background: #202020;
-  color: #f1f1f1;
 }
 
 .fileActions button {
@@ -77,7 +65,7 @@
 .folderFileActions button {
   display: flex;
   align-items: center;
-  color: #424242;
+  color: var(--tree-icon-color);
   background-color: inherit;
   border: none;
   font-size: 14px;
@@ -87,7 +75,7 @@
 }
 
 .folderFileActions button:hover {
-  color: #f1f1f1;
+  color: var(--tree-icon-hover-color);
 }
 
 .nodeContainer .fileActions .folderFileActions {
@@ -99,18 +87,18 @@
 }
 
 .nodeContainer.isSelected {
-  background: #343434;
-  color: #f1f1f1;
+  background: var(--tree-file-active-color);
+  color: var(--font-color);
   border-radius: 0;
 }
 
 [role="treeitem"]:hover {
-  background: #202020;
-  color: #f1f1f1;
+  background: var(--tree-file-hover-color);
+  color: var(--font-color);
 }
 
 [role="treeitem"]:focus-within {
-  background-color: rgba(52, 52, 52, 0.4);
+  background-color: var(--tree-file-focus-color);
   outline: none;
 }
 

@@ -7,6 +7,7 @@ import cs from "./Output.module.css";
 import { $output, openTab } from "../../stores/output.ts";
 import { CacheTab } from "./CacheTab.tsx";
 import { InfoTab } from "./InfoTab.tsx";
+import { useMediaQuery } from "react-responsive";
 
 export const Output = ({ result, log }: {
   result: string,
@@ -24,6 +25,10 @@ export const Output = ({ result, log }: {
     }
     return v;
   }, [log, result]);
+
+  const darkTheme = useMediaQuery({
+    query: "(prefers-color-scheme: dark)"
+  });
 
   return (
     <>
@@ -47,7 +52,7 @@ export const Output = ({ result, log }: {
             <MonacoEditor
               height="100%"
               width="100%"
-              theme="vs-dark"
+              theme={darkTheme ? "vs-dark" : "light"}
               value={value}
               language="shell"
               options={{

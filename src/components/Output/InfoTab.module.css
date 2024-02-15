@@ -8,7 +8,7 @@
 }
 
 .about code {
-  color: #f66;
+  color: var(--code-color);
 }
 
 .about ul {

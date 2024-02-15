@@ -16,7 +16,7 @@
   width: 300px;
   max-width: 300px;
   height: calc(100vh - 56px);
-  background-color: #1a1a1a;
+  background-color: var(--bg-color);
 
   margin: 0;
   padding: 16px 0;
@@ -45,7 +45,7 @@
   left: 0;
   width: 100vw;
   height: calc(100vh - 56px);
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: var(--transparent-black-color);
   z-index: 1;
 }
 
@@ -53,7 +53,7 @@
   display: flex;
   flex-direction: column;
   border-radius: 16px;
-  background-color: #1e1e1e;
+  background-color: var(--content-color);
   padding: 16px 0;
   margin: 0;
   width: 100%;
@@ -63,7 +63,7 @@
 }
 
 .output {
-  background-color: #1e1e1e;
+  background-color: var(--content-color);
   border-radius: 16px;
   padding: 16px 8px;
   margin: 0;

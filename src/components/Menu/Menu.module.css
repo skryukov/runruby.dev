@@ -3,7 +3,7 @@
   flex-shrink: 0;
   font-size: 14px;
   font-weight: bold;
-  color: #f1f1f1;
+  color: var(--font-color);
   margin-bottom: 8px;
   display: flex;
   align-items: center;
@@ -20,10 +20,10 @@
   display: inline-flex;
   align-items: center;
   font-size: 16px;
-  color: #424242;
+  color: var(--tree-icon-color);
 }
 
 .menuButton:hover {
-  color: #f1f1f1;
+  color: var(--tree-icon-hover-color);
   border-radius: 8px;
 }

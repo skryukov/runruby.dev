@@ -3,7 +3,7 @@
   flex-shrink: 0;
   margin-top: auto;
   font-size: 12px;
-  color: #f1f1f1;
+  color: var(--font-color);
   margin-bottom: 8px;
 }
 
@@ -12,7 +12,7 @@
   font-size: 14px;
   font-weight: bold;
   display: inline-block;
-  color: #f1f1f1;
+  color: var(--font-color);
   height: auto;
 }
 
@@ -20,8 +20,8 @@
   margin-left: 16px;
   padding: 4px 8px;
   border: none;
-  background: #7D2E45;
-  color: #f1f1f1;
+  background: var(--danger-color);
+  color: var(--font-color);
   border-radius: 8px;
   cursor: default;
   font-size: 11px;
@@ -30,11 +30,11 @@
 }
 
 .clearCacheButton:hover {
-  background: #5C1D2E;
+  background: var(--danger-hover-color);
 }
 
 .buttonDisabled {
-  background-color: #424242 !important;
+  background-color: var(--tag-color) !important;
 }
 
 .listOfGems {
@@ -59,8 +59,8 @@
   visibility: hidden;
   width: 300px;
   font-size: 11px;
-  background-color: rgba(0, 0, 0, 0.75);
-  color: #fff;
+  background-color: var(--transparent-black-color);
+  color: var(--font-color);
   text-align: center;
   padding: 8px;
   border-radius: 4px;

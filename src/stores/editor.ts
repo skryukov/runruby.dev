@@ -14,7 +14,7 @@ export const $editor = map<EditorStoreValue>({
   currentNodeId: null,
   treeData: [],
   code: null,
-  tree: null,
+  tree: null
 });
 
 export const $editorVersion = atom(0);
@@ -46,7 +46,7 @@ export const currentFilePathStore = computed([$editor, $editorVersion], editor =
 });
 
 export const currentFileStore = computed($editor, editor => {
-if (editor.currentNodeId === null) return null;
+  if (editor.currentNodeId === null) return null;
 
   const currentNode = editor.tree?.get(editor.currentNodeId);
   if (!currentNode) return null;

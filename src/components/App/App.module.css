@@ -9,7 +9,7 @@
   flex-direction: column;
   padding: 0;
   margin: 0;
-  background-color: #1a1a1a;
+  background-color: var(--bg-color);
 }
 
 .header {
@@ -31,12 +31,12 @@
   padding: 8px;
   border-radius: 16px;
   margin: 0 0 0 8px;
-  color: #f1f1f1;
+  color: var(--menu-icon-color);
   background-color: transparent;
 }
 
 .menuButton:hover {
-  background-color: #424242;
+  background-color: var(--menu-icon-hover-color);
 }
 
 @media (max-width: 1280px) {
@@ -48,6 +48,6 @@
 .title {
   font-size: 16px;
   font-weight: bold;
-  color: #f1f1f1;
+  color: var(--font-color);
   padding: 8px 16px;
 }

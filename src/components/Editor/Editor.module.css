@@ -16,11 +16,11 @@
 
 .editorLabel {
   font-size: 14px;
-  color: #f1f1f1;
+  color: var(--font-color);
   font-weight: bold;
   padding: 8px 16px;
   border-radius: 8px;
-  background-color: #424242;
+  background-color: var(--tag-color);
 }
 
 .editorText {
@@ -50,9 +50,9 @@
 }
 
 .installButton {
-  background-color: #044b7f;
+  background-color: var(--secondary-color);
   border: none;
-  color: #f1f1f1;
+  color: var(--font-color);
   font-weight: bold;
   padding: 8px 16px;
   text-align: center;
@@ -64,13 +64,13 @@
 }
 
 .installButton:hover {
-  background-color: #003d6b;
+  background-color: var(--secondary-hover-color);
 }
 
 .runButton {
-  background-color: #388E3C;
+  background-color: var(--primary-color);
   border: none;
-  color: #f1f1f1;
+  color: var(--font-color);
   font-weight: bold;
   padding: 8px 16px;
   text-align: center;
@@ -83,9 +83,9 @@
 }
 
 .runButton:hover {
-  background-color: #2E7D32;
+  background-color: var(--primary-hover-color);
 }
 
 .buttonDisabled {
-  background-color: #424242 !important;
+  background-color: var(--tag-color) !important;
 }
