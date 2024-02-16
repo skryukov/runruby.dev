@@ -55,21 +55,26 @@ export const Output = ({ result, log }: {
               value={value}
               language="shell"
               options={{
-                wordWrap: "on",
-                lineNumbers: "off",
                 readOnly: true,
+
+                fontFamily: "Martian Mono, monospace",
+                automaticLayout: true,
+                wordWrap: "on",
+
+                lineNumbers: "off",
+                glyphMargin: false,
+                folding: false,
+                lineDecorationsWidth: 0,
+                lineNumbersMinChars: 0,
                 minimap: { enabled: false },
                 overviewRulerBorder: false,
                 renderLineHighlight: "none",
                 hideCursorInOverviewRuler: true
               }} />
           ) : (activeTab === "info") ? (
-            <div className={cs.tab}>
-              <InfoTab />
-            </div>) : (
-            <div className={cs.tab}>
-              <CacheTab />
-            </div>
+            <InfoTab />
+          ) : (
+            <CacheTab />
           )
         }
       </div>

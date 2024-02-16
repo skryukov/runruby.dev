@@ -3,8 +3,26 @@
   line-height: 1.4;
 }
 
+@media (max-width: 1280px) {
+  .about {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 860px) {
+  .about {
+    font-size: 12px;
+  }
+}
+
 .about p {
-  margin: 8px 0 16px;
+  margin: 8px 0;
+}
+
+@media (max-width: 860px) {
+  .about p {
+    margin: 4px 0;
+  }
 }
 
 .about code {
@@ -23,10 +41,11 @@
 }
 
 .about ul {
-  padding: 0;
+  padding: 12px;
 }
 
 .about ul li {
+  padding-left: 4px;
   margin-bottom: 8px;
 }
 

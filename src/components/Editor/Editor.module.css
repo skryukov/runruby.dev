@@ -5,6 +5,10 @@
   flex-direction: column;
 }
 
+.editorText .monaco-editor .margin {
+  max-width: 10px;
+}
+
 .editorHeader {
   display: flex;
   flex-direction: row;
@@ -12,6 +16,12 @@
   align-items: center;
   justify-content: space-between;
   height: 50px;
+}
+
+@media (max-width: 1280px) {
+  .editorHeader {
+    padding: 0 8px 8px 8px;
+  }
 }
 
 .editorLabel {
@@ -37,10 +47,17 @@
 }
 
 .editorFooter {
-  padding: 16px 16px 0 16px;
+  padding: 16px;
   text-align: right;
-  height: 50px;
+  height: auto;
+  max-height: 50px;
   border-top: 0.5px #ffffff14 solid;
+}
+
+@media (max-width: 1280px) {
+  .editorFooter {
+    padding: 8px;
+  }
 }
 
 .editorLoading {

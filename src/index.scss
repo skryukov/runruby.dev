@@ -84,6 +84,16 @@
   --tree-icon-hover-color: var(--font-color);
 }
 
+:root {
+  --header-height: 56px;
+}
+
+@media (max-width: 1280px) {
+  :root {
+    --header-height: 40px;
+  }
+}
+
 * {
   box-sizing: border-box;
   margin: 0;

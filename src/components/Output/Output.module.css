@@ -1,18 +1,26 @@
 .editorText {
-  padding: 0 8px;
+  padding: 0 16px;
   flex: 1;
   overflow-y: scroll;
 }
 
-.tab {
-  padding: 0 8px 0 32px;
+@media (max-width: 1280px) {
+  .editorText {
+    padding: 0 8px;
+  }
 }
 
 .switchButtons {
   display: flex;
   flex-direction: row;
   gap: 8px;
-  padding: 0 16px 8px;
+  padding: 4px 8px 16px;
+}
+
+@media (max-width: 860px) {
+  .switchButtons {
+    padding: 4px 4px 8px;
+  }
 }
 
 .switchButton {

@@ -191,6 +191,10 @@ export const Editor = ({
                 fontFamily: "Martian Mono, monospace",
                 automaticLayout: true,
                 wordWrap: "on",
+
+                glyphMargin: false,
+                lineDecorationsWidth: 0,
+                lineNumbersMinChars: 3,
                 minimap: { enabled: false },
                 overviewRulerBorder: false,
                 hideCursorInOverviewRuler: true
@@ -208,7 +212,7 @@ export const Editor = ({
       </div>
       <div className={cs.editorFooter}>
         <div className={cs.editorLoading}>
-          {loading && <VscLoading size={20}/>}
+          {loading && <VscLoading size={20} />}
         </div>
         <button className={`${cs.installButton} ${canRunBundleInstall ? "" : cs.buttonDisabled}`}
                 disabled={!canRunBundleInstall}

@@ -83,9 +83,9 @@ export const CacheTab = () => {
         ) : (
           <>
             <div>
-              Estimated usage:
-            {formatBytes(cache.info?.usage || 0)}/{formatBytes(cache.info?.quota || 0)}
-                <div className={cs.tooltip}>
+              Estimated usage:{" "}
+              {formatBytes(cache.info?.usage || 0)}/{formatBytes(cache.info?.quota || 0)}
+              <div className={cs.tooltip}>
                 <VscInfo />
                 <span className={cs.tooltiptext}>
                   Storage space might not be immediately reclaimed after deleting data due to the browser's internal garbage collection processes.

@@ -15,7 +15,7 @@
   flex-direction: column;
   width: 300px;
   max-width: 300px;
-  height: calc(100vh - 56px);
+  height: calc(100vh - var(--header-height));
   background-color: var(--bg-color);
 
   margin: 0;
@@ -35,16 +35,16 @@
   .menu.menuOpen {
     width: 300px;
     padding: 16px;
-    height: calc(100vh - 56px);
+    height: calc(100vh - var(--header-height));
   }
 }
 
 .menuShadow {
   position: fixed;
-  top: 56px;
+  top: var(--header-height);
   left: 0;
   width: 100vw;
-  height: calc(100vh - 56px);
+  height: calc(100vh - var(--header-height));
   background-color: var(--transparent-black-color);
   z-index: 1;
 }
@@ -76,6 +76,15 @@
   overflow: hidden;
 }
 
+@media (max-width: 1280px) {
+  .editor {
+    padding: 4px 0;
+  }
+
+  .output {
+    padding: 4px;
+  }
+}
 
 @media (max-width: 860px) {
   .content {

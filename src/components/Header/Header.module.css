@@ -1,8 +1,8 @@
 .header {
   width: 100%;
-  height: 56px;
-  min-height: 56px;
-  max-height: 56px;
+  height: var(--header-height);
+  min-height: var(--header-height);
+  max-height: var(--header-height);
   margin: 0;
   padding: 0;
   display: flex;
@@ -35,7 +35,14 @@
   font-size: 16px;
   font-weight: bold;
   color: var(--font-color);
-  padding: 8px 16px;
+  padding: 0 16px;
+}
+
+@media (max-width: 1280px) {
+  .title {
+    font-size: 14px;
+    padding: 0 8px;
+  }
 }
 
 .links {

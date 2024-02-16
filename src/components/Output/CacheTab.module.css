@@ -8,12 +8,18 @@
 }
 
 .cacheInfoLabel {
-  margin: 16px 0;
+  padding: 8px 0;
   font-size: 14px;
   font-weight: bold;
   display: inline-block;
   color: var(--font-color);
   height: auto;
+}
+
+@media (max-width: 860px) {
+  .cacheInfoLabel {
+    padding: 4px 0 8px;
+  }
 }
 
 .clearCacheButton {
@@ -41,6 +47,13 @@
   overflow-y: scroll;
   max-height: 400px;
   margin: 8px 0;
+}
+
+@media (max-width: 860px) {
+  .listOfGems {
+    max-height: initial;
+    overflow-y: initial;
+  }
 }
 
 .listOfGems ul {
