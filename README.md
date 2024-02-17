@@ -1,5 +1,7 @@
 # RunRuby.dev
 
+<img align="right" height="150" width="150" title="RunRuby.dev logo" src="./public/icon.svg">
+
 [RunRuby.dev](https://runruby.dev) brings Ruby programming into your browser, streamlining the process of writing and running Ruby code. Here's what sets it apart:
 
 - **Simple Editing**: Easily create, rename, and manage text files and directories directly in your browser.
