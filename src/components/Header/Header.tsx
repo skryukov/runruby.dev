@@ -21,8 +21,10 @@ export const Header = () => {
       <button className={cs.headerMenuButton} onClick={toggleMenu}>
         {isOpen ? <VscClose size={16} /> : <VscMenu size={16} />}
       </button>
-
-      <h1 className={cs.title}>RunRuby.dev</h1>
+      <div className={cs.logoContainer}>
+        <img src="/icon.svg" alt="RunRuby.dev" className={cs.logo} />
+        <h1 className={cs.title}>RunRuby.dev</h1>
+      </div>
 
       <div className={cs.links}>
         <span className={cs.link} onClick={toggleTheme}>
