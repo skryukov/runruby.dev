@@ -46,7 +46,7 @@ const defaultGem = gemFromURI() || gem;
 
 const defaultCode = `# This is a Ruby WASI playground
 # You can run any Ruby code here and see the result
-# You can also install gems using Gemfile an the "Bundle install" button.
+# You can also install gems using a Gemfile and the "Bundle install" button.
 
 require "${defaultGem}"
 ${defaultGem === gem ? gemCode : ''}`;
