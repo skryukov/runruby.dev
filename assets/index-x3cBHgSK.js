@@ -332,7 +332,7 @@ user = client.user("matz")
 {login: user.login, name: user.name, company: user.company}
 `,Dm=()=>{const e=new URL(window.location.href),n=new URLSearchParams(e.search).get("initialCode");return n?decodeURIComponent(atob(n)):void 0},km=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("embed")},Ap=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("gem")},Fs=()=>{const e=new URL(window.location.href);return new URLSearchParams(e.search).get("gist")},$s=Ap()||Lp,zp=`# This is a Ruby WASI playground
 # You can run any Ruby code here and see the result
-# You can also install gems using Gemfile an the "Bundle install" button.
+# You can also install gems using a Gemfile and the "Bundle install" button.
 
 require "${$s}"
 ${$s===Lp?Im:""}`,Pm=`source "https://rubygems.org"
