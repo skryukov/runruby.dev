@@ -1,0 +1,4 @@
+name = "runruby-worker"
+main = "src/index.ts"
+compatibility_flags = ["nodejs_compat"]
+compatibility_date = "2024-02-23"
