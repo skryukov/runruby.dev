@@ -5,6 +5,7 @@
 [RunRuby.dev](https://runruby.dev) brings Ruby programming into your browser, streamlining the process of writing and running Ruby code. Here's what sets it apart:
 
 - **Simple Editing**: Easily create, rename, and manage text files and directories directly in your browser.
+- **Gist integration**: Save your work to a GitHub Gist and share it with others.
 - **Bundler Support**: Add a `Gemfile` to your project and click "Bundle Install". The absence of native networking in WASI is not a problem.
 - **Networking**: For networking, try using `Faraday` with the `Faraday::Adapter::JS` adapter to make web requests from Ruby.wasm.
 - **Quick start**: Access gems or gists quickly with `runruby.dev/{gem_name}` and `runruby.dev/gist/{id}` URLs.

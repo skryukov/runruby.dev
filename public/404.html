@@ -28,7 +28,12 @@
     const host = l.protocol + "//" + l.hostname + (l.port ? ":" + l.port : "");
     let search = (l.search ? l.search.slice(1) : "");
     const paths = l.pathname.slice(1).split("/");
-    if (paths[0] === "gist") {
+    if (paths[0] === "callback" || paths[0] === "404.html") {
+      const bc = new BroadcastChannel("oauth")
+      bc.postMessage(search);
+      bc.close();
+      window.close();
+    } else if (paths[0] === "gist") {
       search = "gist=" + paths[1] + (search ? "&" + search : "");
     } else if (paths[0]) {
       search = "gem=" + paths[0] + (search ? "&" + search : "");

@@ -1,12 +1,13 @@
 import { useCallback, useRef } from "react";
 import { CreateHandler, DeleteHandler, NodeApi, RenameHandler, Tree, TreeApi } from "react-arborist";
-import { Directory, File } from "@bjorn3/browser_wasi_shim";
+import { Directory } from "@bjorn3/browser_wasi_shim";
 import { nanoid } from "nanoid";
-import { VscFileZip, VscNewFile, VscNewFolder } from "react-icons/vsc";
+import { VscFileZip, VscLinkExternal, VscNewFile, VscNewFolder } from "react-icons/vsc";
+import { useStore } from "@nanostores/react";
 
-import { encode, workDir } from "../../engines/wasi/editorFS.ts";
+import { mkdir, rename, rm, writeFile } from "../../engines/wasi/editorFS.ts";
 import { Node } from "../Node/Node.tsx";
-import { Entity, getPath, idsMap, sortChildren } from "../../fsMap.ts";
+import { Entity, idsMap, sortChildren } from "../../fsMap.ts";
 import cs from "../Menu/Menu.module.css";
 import {
   $editor,
@@ -16,22 +17,18 @@ import {
   setCurrentNodeId,
   setTree
 } from "../../stores/editor.ts";
+import { $gist } from "../../stores/gists.ts";
 import { downloadZip } from "../../downloadZip.ts";
-import { useStore } from "@nanostores/react";
 
 export const Menu = () => {
   const { treeData, tree } = useStore($editor);
   const currentFilePath = useStore(currentFilePathStore);
 
   const onRename: RenameHandler<Entity> = ({ name, node }) => {
-    const parent = (node.parent == null || node.parent.isRoot) ? workDir.dir : node.parent.data.object as Directory;
+    const oldPath = node.data.fullPath;
+    const newPath = oldPath.replace(new RegExp(`${node.data.name}$`), name);
 
-    if (node && node.data.name !== name) {
-      if (parent.contents[name] !== undefined) {
-        throw new Error(`File or directory with name ${name} already exists`);
-      }
-      parent.contents[name] = node.data.object;
-      delete parent.contents[node.data.name];
+    if (rename(oldPath, newPath)) {
       refreshTreeData();
 
       setTimeout(() => {
@@ -41,10 +38,10 @@ export const Menu = () => {
   };
 
   const onCreate: CreateHandler<Entity> = ({ parentNode, type }) => {
-    const parent = (parentNode?.data?.object || workDir.dir) as Directory;
-    const object = (type === "leaf") ? new File(encode("")) : new Directory({});
     const name = (type === "leaf") ? `new_file_${Date.now()}.rb` : `new_dir_${Date.now()}`;
-    parent.contents[name] = object;
+    const path = `${parentNode ? parentNode.data.fullPath : ""}/${name}`;
+    const object = (type === "leaf") ? writeFile(path, "") : mkdir(path);
+
     const id = nanoid();
     idsMap.set(object, id);
     refreshTreeData();
@@ -55,9 +52,8 @@ export const Menu = () => {
     ids.forEach((id) => {
       const node = tree?.get(id);
       if (node) {
-        const parent = (node.parent == null || node.parent.isRoot) ? workDir.dir : node.parent.data.object as Directory;
-        delete parent.contents[node.data.name];
-        if (currentFilePath === getPath(node)) {
+        rm(node.data.fullPath);
+        if (currentFilePath === node.data.fullPath) {
           setCurrentNodeId(null);
         }
       }
@@ -72,10 +68,29 @@ export const Menu = () => {
     setTree(tree);
   }, []);
 
+  const gist = useStore($gist);
+
   return (
     <>
+      {gist.id && (
+        <div className={cs.gistInfo}>
+          <div className={cs.gistLabel}>
+            Gist info
+            <a className={cs.gistLink} target="_blank" href={`https://gist.github.com/${gist.username}/${gist.id}`}>open
+              gist <VscLinkExternal /></a>
+          </div>
+          <div className={cs.userInfo}>
+            <img className={cs.avatar} src={gist.avatarUrl} alt={gist.username} />
+            {gist.username}
+          </div>
+          {gist.description && (<p className={cs.gistDescription}>
+            {gist.description}
+          </p>)}
+        </div>
+      )}
+
       <div className={cs.menuHead}>
-        <label className={cs.menuLabel}>Files</label>
+        <div className={cs.menuLabel}>Files</div>
         <button
           className={cs.menuButton}
           onClick={downloadZip}
@@ -99,7 +114,7 @@ export const Menu = () => {
         width="100%"
         openByDefault={false}
         data={treeData}
-        childrenAccessor={({ object }) => (object instanceof Directory) ? sortChildren(object) : null}
+        childrenAccessor={({ object, fullPath }) => (object instanceof Directory) ? sortChildren(object, fullPath) : null}
         ref={setTreeRef as never}
         disableDrag={true}
         disableDrop={true}

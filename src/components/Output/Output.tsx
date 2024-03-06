@@ -10,7 +10,6 @@ import { CacheTab } from "./CacheTab.tsx";
 import { InfoTab } from "./InfoTab.tsx";
 import cs from "./Output.module.css";
 
-
 export const Output = ({ result, log }: {
   result: string,
   log: string[],
