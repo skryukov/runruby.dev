@@ -25,9 +25,20 @@
   font-size: 20px;
 }
 
-.nodeContent span.nodeText {
+.nodeText {
   flex: 1;
   font-size: 14px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.dirtyFile::before {
+  content: "•";
+  color: var(--primary-color);
+  position: absolute;
+  left: -40px;
+  font-size: 16px;
 }
 
 .nodeContent input[type="text"] {
@@ -101,4 +112,3 @@
   background-color: var(--tree-file-focus-color);
   outline: none;
 }
-

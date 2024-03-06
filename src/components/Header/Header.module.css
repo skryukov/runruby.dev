@@ -31,27 +31,29 @@
   }
 }
 
+.gistLoading {
+  margin: 0 16px;
+  display: inline-flex;
+  vertical-align: middle;
+}
+
+.gistLoading svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .logoContainer {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-left: 16px
-}
-
-@media (max-width: 1280px) {
-  .logoContainer {
-    margin-left: 8px
-  }
-}
-
-@media (max-width: 860px) {
-  .logoContainer {
-    margin: 0;
-    flex: 1;
-  /*  put content in center*/
-    justify-content: center;
-
-  }
+  margin: 0;
+  flex: 1;
+  justify-content: center;
 }
 
 .logo {
@@ -78,10 +80,18 @@
   }
 }
 
+@media (max-width: 860px) {
+  .title {
+    display: none;
+  }
+}
+
 .links {
   display: flex;
   align-items: center;
   margin: 0 8px 0 auto;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .link {
@@ -95,4 +105,147 @@
 
 .link:hover {
   color: var(--link-hover-color);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-start;
+  padding-left: 16px;
+  flex: 1;
+}
+
+@media (max-width: 1280px) {
+  .buttons {
+    padding-left: 8px;
+  }
+}
+
+.forkButton {
+  background-color: var(--secondary-color);
+  border: 1px solid var(--secondary-color);
+  color: var(--font-color);
+  font-weight: bold;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: default;
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.forkButton:hover {
+  background-color: var(--secondary-hover-color);
+  border: 1px solid var(--secondary-hover-color);
+  color: var(--font-color);
+}
+
+.saveButton {
+  background-color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  color: var(--font-color);
+  font-weight: bold;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: default;
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.saveButton:hover {
+  background-color: var(--primary-hover-color);
+  border: 1px solid var(--primary-hover-color);
+  color: var(--font-color);
+}
+
+.disabledButton {
+  background-color: var(--tag-color) !important;
+  border: 1px solid var(--tag-color)!important;
+}
+
+.SignInButton {
+  background-color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+  color: var(--font-color);
+  font-weight: bold;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 12px;
+  cursor: default;
+  border-radius: 8px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.SignInButton:hover {
+  background-color: var(--primary-hover-color);
+}
+
+.userContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+}
+
+.userMenu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--bg-color);
+  border: 1px solid var(--tag-color);
+  border-radius: 8px;
+  padding: 8px 16px;
+  z-index: 100;
+}
+
+.userMenu.show {
+  display: block;
+}
+
+.signOutButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  border: none;
+  padding: 8px;
+  border-radius: 16px;
+  margin: 0 0 0 8px;
+  color: var(--menu-icon-color);
+  background-color: transparent;
+  white-space: nowrap;
+}
+
+.userMenuButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  border: none;
+  padding: 8px;
+  border-radius: 16px;
+  margin: 0 0 0 8px;
+  color: var(--menu-icon-color);
+  background-color: transparent;
 }

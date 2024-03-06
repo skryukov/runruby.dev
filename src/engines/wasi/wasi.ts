@@ -5,7 +5,8 @@ import { Fd, PreopenDirectory, File, WASI, OpenFile, ConsoleStdout } from "@bjor
 import { wasiImports } from "./wasiImports";
 import { TRunParams, TSetString } from "../types";
 import { generateRubyStubsDir } from "../../stubs";
-import { workDir } from "./editorFS";
+import { writeFiles } from "./editorFS.ts";
+import { composeInitialFS } from "../../fsInitializer.ts";
 
 const wasmModulePromise = fetch(wasmUrl).then((response) => WebAssembly.compileStreaming(response));
 
@@ -13,9 +14,19 @@ const rubyStubsPath = "/usr/local/lib/ruby_gems";
 
 export const gemsDir = new PreopenDirectory("/gems", {});
 export const bundleDir = new PreopenDirectory("/.bundle", {});
+export const workDir: PreopenDirectory = new PreopenDirectory("/", {});
+
+let FSInitialized = false;
+
+export const initializeFS = async () => {
+  if (FSInitialized) return;
+  FSInitialized = true;
+
+  const fs = await composeInitialFS();
+  writeFiles(fs);
+};
 
 const dirFds = [
-  workDir,
   generateRubyStubsDir(rubyStubsPath),
   bundleDir,
   gemsDir
@@ -26,6 +37,7 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
     new OpenFile(new File([])), // stdin
     ConsoleStdout.lineBuffered(setStdout),
     ConsoleStdout.lineBuffered(setStderr),
+    workDir,
     ...dirFds
   ];
   const wasi = new WASI([], [], fds, { debug: false });

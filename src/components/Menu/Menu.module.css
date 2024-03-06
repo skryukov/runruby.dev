@@ -27,3 +27,51 @@
   color: var(--tree-icon-hover-color);
   border-radius: 8px;
 }
+
+.gistInfo {
+  padding-left: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.gistLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--font-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gistLink {
+  font-size: 12px;
+  font-weight: normal;
+  float: right;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  padding: 8px 0 0;
+  font-size: 12px;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.gistDescription {
+  display: block;
+  font-size: 12px;
+  color: var(--font-color);
+  opacity: 65%;
+  padding: 8px 0;
+}
+

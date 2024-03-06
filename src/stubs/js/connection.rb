@@ -67,7 +67,7 @@ class JS::Connection
 
   def proxy_uri(uri)
     if URI(uri.to_s).host.match? /(\A|\.)rubygems.org\z/
-      "https://rubygems.runruby.dev/?#{uri.to_s}"
+      "https://worker.runruby.dev/proxy?#{uri.to_s}"
     else
       uri.to_s
     end

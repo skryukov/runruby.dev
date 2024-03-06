@@ -1,16 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Directory, File } from "@bjorn3/browser_wasi_shim";
 import MonacoEditor from "@monaco-editor/react";
 import { useStore } from "@nanostores/react";
+import { VscLoading } from "react-icons/vsc";
 
-import {
-  decode, embedFromURI,
-  encode,
-  gemFromURI,
-  gistFromURI,
-  workDir
-} from "../../engines/wasi/editorFS.ts";
-import importFromGist from "../../gist.ts";
+import { decode, writeFile } from "../../engines/wasi/editorFS.ts";
 import { RunVMParams } from "../../useVM.ts";
 import { db } from "../../db.ts";
 import { bundleDir, gemsDir } from "../../engines/wasi/wasi.ts";
@@ -24,9 +17,9 @@ import {
   setCode
 } from "../../stores/editor.ts";
 import { useEditorTheme } from "../../useEditorTheme.ts";
+import { getQueryParam } from "../../fsInitializer.ts";
 
 import cs from "./Editor.module.css";
-import { VscLoading } from "react-icons/vsc";
 
 type EditorProps = {
   loading: boolean;
@@ -127,42 +120,19 @@ export const Editor = ({
   }, [currentFile]);
 
   useEffect(() => {
-    const gist = gistFromURI();
-    if (gist) {
-      importFromGist(gist).then(({ files }) => {
-        files.forEach(({ filename, content }) => {
-          const parts = filename.split("/");
-          const name = parts.pop() as string;
-          let dir = workDir.dir;
-          parts.forEach((part) => {
-            if (!dir.contents[part]) {
-              dir.contents[part] = new Directory({});
-            }
-            dir = dir.contents[part] as Directory;
-          });
-          workDir.dir.contents[name] = new File(encode(content));
-        });
-
-        refreshTreeData();
-        setTimeout(() => activateFirstFile(), 20);
-      });
-    }
-  }, [activateFirstFile]);
-
-  useEffect(() => {
-    if (editorInitializing) {
+    if (editorInitializing && treeData) {
       activateFirstFile();
     } else if (!bundleInstalled.current) {
-      ((gemFromURI() || gistFromURI()) && !embedFromURI()) && canRunBundleInstall && bundleInstall();
+      ((getQueryParam("gem") || getQueryParam("gist")) && !getQueryParam("embed")) && canRunBundleInstall && bundleInstall();
       bundleInstalled.current = true;
     }
-  }, [activateFirstFile, bundleInstall, canRunBundleInstall, editorInitializing]);
+  }, [treeData, activateFirstFile, bundleInstall, canRunBundleInstall, editorInitializing]);
 
   const handleEditorChange = (value: string | undefined) => {
     setCode(value || "");
 
-    if (currentFile) {
-      currentFile.data = encode(value || "");
+    if (currentFilePath) {
+      writeFile(currentFilePath, value || "")
     }
   };
 

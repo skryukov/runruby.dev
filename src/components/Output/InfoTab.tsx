@@ -14,6 +14,9 @@ export const InfoTab = () => {
           browser.
         </li>
         <li>
+          <strong>Gist integration</strong>: Save your work to a GitHub Gist and share it with others.
+        </li>
+        <li>
           <strong>Bundler Support</strong>: Add a <code>Gemfile</code> to your project and click "Bundle Install". The
           absence of
           native networking in WASI is not a problem.

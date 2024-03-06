@@ -2,7 +2,10 @@
   "name": "ruby-wasi-playground",
   "private": true,
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
+  "description": "RunRuby.dev WASI playground",
+  "author": "Svyatoslav Kryukov <me@skryukov.dev>",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -31,6 +34,7 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
+    "@types/node": "^20.11.24",
     "@types/react": "^18.2.55",
     "@types/react-dom": "^18.2.19",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
@@ -42,6 +46,7 @@
     "sass": "^1.70.0",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
+    "vite-plugin-mkcert": "^1.17.3",
     "vite-plugin-svgr": "^4.2.0"
   },
   "optionalDependencies": {

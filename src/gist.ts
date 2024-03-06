@@ -1,3 +1,5 @@
+import { $gist } from "./stores/gists.ts";
+
 const BASE_URL = "https://api.github.com/gists/";
 
 export interface GistFile {
@@ -5,8 +7,19 @@ export interface GistFile {
   content: string;
 }
 
-export default async function importFromGist(gistUrl: string): Promise<{ files: GistFile[] }> {
+export type Gist = {
+  files: GistFile[];
+  description: string;
+  username: string;
+  userId: number;
+  avatarUrl: string;
+}
+
+export default async function importFromGist(gistUrl: string): Promise<Gist> {
   const id = gistUrl.split("/").pop();
+  if (id === undefined) {
+    throw new Error(`Gist id not found`);
+  }
 
   const url = `${BASE_URL}${id}`;
 
@@ -22,5 +35,15 @@ export default async function importFromGist(gistUrl: string): Promise<{ files: 
     throw new Error(`Gist has no files`);
   }
 
-  return { files: Object.values(data.files) };
+  const res: Gist = {
+    files: Object.values(data.files),
+    description: data.description,
+    username: data.owner.login,
+    userId: data.owner.id,
+    avatarUrl: data.owner.avatar_url
+  };
+
+  $gist.set({ id, ...res });
+
+  return res;
 }

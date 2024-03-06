@@ -1,11 +1,11 @@
 import { action, map } from "nanostores";
 
-type Tab = "info" | "logs" | "gems";
+type Tab = "info" | "logs" | "gems" | "share";
 
 type OutputStoreValue = {
   activeTab: Tab;
-
 }
+
 export const $output = map<OutputStoreValue>({
   activeTab: "info"
 });

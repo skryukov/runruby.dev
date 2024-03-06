@@ -3,6 +3,8 @@ import { VscEdit, VscFile, VscFolder, VscFolderOpened, VscTrash } from "react-ic
 
 import { Entity } from "../../fsMap.ts";
 import cs from "./Node.module.css";
+import { useStore } from "@nanostores/react";
+import { $editor } from "../../stores/editor.ts";
 
 function isValidFileName(fileName: string) {
   if (fileName.trim() === "") {
@@ -24,6 +26,7 @@ function submitNodeName(node: NodeApi<Entity>, value: string) {
 }
 
 export const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity>) => {
+  const { dirtyFiles } = useStore($editor);
   return (
     <div
       className={`${cs.nodeContainer} ${node.isSelected ? cs.isSelected : ""}`}
@@ -45,7 +48,7 @@ export const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity
           )
         )}
           </span>
-        <span className={cs.nodeText}>
+        <span className={`${cs.nodeText} ${dirtyFiles.includes(node.data.fullPath) ? cs.dirtyFile : ""}`}>
           {node.isEditing ? (
             <input
               type="text"
