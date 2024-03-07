@@ -6,7 +6,7 @@ import { useMemo } from "react";
 import { useEditorTheme } from "../../useEditorTheme.ts";
 import { $output, openTab } from "../../stores/output.ts";
 
-import { CacheTab } from "./CacheTab.tsx";
+import { SettingsTab } from "./SettingsTab.tsx";
 import { InfoTab } from "./InfoTab.tsx";
 import cs from "./Output.module.css";
 
@@ -39,9 +39,9 @@ export const Output = ({ result, log }: {
                 onClick={() => openTab("info")}>
           About
         </button>
-        <button className={`${cs.switchButton} ${activeTab === "gems" ? cs.switchButtonActive : ""}`}
-                onClick={() => openTab("gems")}>
-          Cached Gems
+        <button className={`${cs.switchButton} ${activeTab === "settings" ? cs.switchButtonActive : ""}`}
+                onClick={() => openTab("settings")}>
+          Settings
         </button>
       </div>
       <div className={cs.editorText}>
@@ -73,7 +73,7 @@ export const Output = ({ result, log }: {
           ) : (activeTab === "info") ? (
             <InfoTab />
           ) : (
-            <CacheTab />
+            <SettingsTab />
           )
         }
       </div>

@@ -1,11 +1,14 @@
-import cs from "./CacheTab.module.css";
-import { clearCache, formatBytes } from "../../useDBCacheInfo.ts";
-import { useStore } from "@nanostores/react";
-import { $cache } from "../../stores/cache.ts";
-import { useLiveQuery } from "dexie-react-hooks";
-import { db, DirectoryContents, MarshaledDirectory } from "../../db.ts";
 import { useMemo } from "react";
 import { VscInfo } from "react-icons/vsc";
+import { useLiveQuery } from "dexie-react-hooks";
+import { useStore } from "@nanostores/react";
+
+import { clearCache, formatBytes } from "../../useDBCacheInfo.ts";
+import { $cache } from "../../stores/cache.ts";
+import { db, DirectoryContents, MarshaledDirectory } from "../../db.ts";
+
+import cs from "./SettingsTab.module.css";
+import { $theme, setTheme, Theme } from "../../stores/theme.ts";
 
 function findDirectory(dir: DirectoryContents, s: string) {
   const parts = s.split("/");
@@ -28,8 +31,9 @@ const combinedGems = (gems: [string, string][]) => gems.reduce((acc, [name, vers
   return acc;
 }, {} as Record<string, string[]>);
 
-export const CacheTab = () => {
+export const SettingsTab = () => {
   const cache = useStore($cache);
+  const theme = useStore($theme);
 
   const gemsDirContent = useLiveQuery(
     () => db.fsCache.get({ key: "gemsDir" }),
@@ -56,9 +60,22 @@ export const CacheTab = () => {
 
   return (
     <div className={cs.cacheInfo}>
-      <label className={cs.cacheInfoLabel}>
+      <span className={cs.theme}>
+        Editor theme
+        <select
+          className={cs.themeSelect}
+          value={theme}
+          onChange={(e) => setTheme(e.target.value as Theme)}
+        >
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </span>
+
+      <span className={cs.cacheInfoLabel}>
         Cached Gems
-      </label>
+      </span>
       <div className={cs.listOfGems}>
         {gems.length === 0 ? (
           <p>No gems cached</p>
@@ -71,12 +88,12 @@ export const CacheTab = () => {
         )}
       </div>
 
-      <label className={cs.cacheInfoLabel}>
+      <span className={cs.cacheInfoLabel}>
         Gems Cache Size
         <button className={`${cs.clearCacheButton} ${canRunCacheClear ? "" : cs.buttonDisabled}`}
                 onClick={clearCache}>Clear Cache
         </button>
-      </label>
+      </span>
       <div className={cs.cacheInfoContent}>
         {cache.info.message !== undefined ? (
           <div>{cache.info.message}</div>
@@ -96,6 +113,5 @@ export const CacheTab = () => {
         )}
       </div>
     </div>
-
   );
 };

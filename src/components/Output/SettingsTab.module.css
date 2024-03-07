@@ -7,6 +7,27 @@
   margin-bottom: 8px;
 }
 
+.theme {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.themeSelect {
+  padding: 4px 8px;
+  border: none;
+  background: var(--content-color);
+  color: var(--font-color);
+  border-radius: 8px;
+  cursor: default;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 16px;
+}
+
 .cacheInfoLabel {
   padding: 8px 0;
   font-size: 14px;

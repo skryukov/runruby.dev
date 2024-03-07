@@ -1,6 +1,6 @@
 import { action, map } from "nanostores";
 
-type Tab = "info" | "logs" | "gems" | "share";
+type Tab = "info" | "logs" | "settings";
 
 type OutputStoreValue = {
   activeTab: Tab;

@@ -1,9 +1,7 @@
 import { VscClose, VscGithub, VscLoading, VscMenu, VscRepoForked, VscSave } from "react-icons/vsc";
-import { TbMoon, TbSun, TbSunMoon } from "react-icons/tb";
 import { useStore } from "@nanostores/react";
 
 import { $menu, toggleMenu } from "../../stores/menu.ts";
-import { $theme, toggleTheme } from "../../stores/theme.ts";
 import { $currentUser, $oauth, signOut } from "../../stores/oauth.ts";
 import { $gist, $gistLoading, forkGist, saveGist, updateGist } from "../../stores/gists.ts";
 import { $editor } from "../../stores/editor.ts";
@@ -11,15 +9,8 @@ import useComponentVisible from "../../useComponentVisible.ts";
 
 import cs from "./Header.module.css";
 
-const themeIcons = {
-  ["light"]: <TbSun size={24} />,
-  ["dark"]: <TbMoon size={24} />,
-  ["system"]: <TbSunMoon size={24} />
-};
-
 export const Header = () => {
   const { isOpen } = useStore($menu);
-  const theme = useStore($theme);
   const { state } = useStore($oauth);
   const openedGist = useStore($gist);
   const currentUser = useStore($currentUser);
@@ -36,14 +27,15 @@ export const Header = () => {
 
   return (
     <header className={cs.header}>
-      <button className={cs.headerMenuButton} onClick={toggleMenu}>
-        {isOpen ? <VscClose size={16} /> : <VscMenu size={16} />}
-      </button>
       <div className={cs.buttons}>
+        <button className={cs.headerMenuButton} onClick={toggleMenu}>
+          {isOpen ? <VscClose size={16} /> : <VscMenu size={16} />}
+        </button>
         {showFork && (
           <button
             className={`${cs.forkButton} ${canFork ? "" : cs.disabledButton}`}
             title={canFork ? "Fork this Gist" : "You need to be logged in to fork this Gist"}
+            disabled={!canFork}
             onClick={() => forkGist(openedGist.id)}
           >
             <VscRepoForked /> Fork
@@ -52,16 +44,18 @@ export const Header = () => {
         {(showSave) && (
           <button
             className={`${cs.saveButton} ${canSave ? "" : cs.disabledButton}`}
-            title={canSave ? "Save as a Gist" : "You need to be logged in to save as a Gist"}
+            title={canSave ? "Create a Gist" : "You need to be logged in to create a Gist"}
+            disabled={!canSave}
             onClick={saveGist}
           >
-            <VscSave /> Save as Gist
+            <VscSave /> Create Gist
           </button>
         )}
         {showUpdate && (
           <button
             className={`${cs.saveButton} ${canUpdate ? "" : cs.disabledButton}`}
             title={canUpdate ? "Update Gist" : "No changes to save"}
+            disabled={!canUpdate}
             onClick={() => {
               updateGist(openedGist.id);
             }}
@@ -80,9 +74,6 @@ export const Header = () => {
       </div>
 
       <div className={cs.links}>
-        <span className={cs.link} onClick={toggleTheme}>
-          {themeIcons[theme]}
-        </span>
         {currentUser.id ? (
           <div className={cs.userContainer}
                onClick={() => setIsComponentVisible(true)}

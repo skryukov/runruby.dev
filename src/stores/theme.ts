@@ -1,16 +1,10 @@
 import { action, atom, onMount } from "nanostores";
 
-type Theme = "light" | "dark" | "system";
+export type Theme = "light" | "dark" | "system";
 
 const THEME_KEY = "theme";
 
 export const $theme = atom<Theme>("system");
-
-export const toggleTheme = () => {
-  const current = $theme.get();
-  const next = current === "light" ? "dark" : current === "dark" ? "system" : "light";
-  setTheme(next);
-};
 
 export const setTheme = action($theme, "set", (store, theme: Theme) => {
 

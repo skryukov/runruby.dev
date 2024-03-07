@@ -50,10 +50,15 @@
 .logoContainer {
   display: flex;
   align-items: center;
-  gap: 8px;
   margin: 0;
-  flex: 1;
+  flex: none;
   justify-content: center;
+}
+
+@media (max-width: 860px) {
+  .logoContainer {
+    display: none;
+  }
 }
 
 .logo {
@@ -138,6 +143,10 @@
   align-items: center;
 }
 
+.forkButton svg {
+  flex: none;
+}
+
 .forkButton:hover {
   background-color: var(--secondary-hover-color);
   border: 1px solid var(--secondary-hover-color);
@@ -158,6 +167,11 @@
   display: inline-flex;
   gap: 8px;
   align-items: center;
+  white-space: nowrap;
+}
+
+.saveButton svg {
+  flex: none;
 }
 
 .saveButton:hover {
@@ -168,7 +182,7 @@
 
 .disabledButton {
   background-color: var(--tag-color) !important;
-  border: 1px solid var(--tag-color)!important;
+  border: 1px solid var(--tag-color) !important;
 }
 
 .SignInButton {
@@ -185,10 +199,15 @@
   display: inline-flex;
   gap: 8px;
   align-items: center;
+  white-space: nowrap;
 }
 
 .SignInButton:hover {
   background-color: var(--primary-hover-color);
+}
+
+.SignInButton svg {
+  flex: none;
 }
 
 .userContainer {
