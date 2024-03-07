@@ -2,12 +2,10 @@ import importFromGist from "./gist.ts";
 
 const defaultGem = "octokit";
 
-const mainRbHeader = (gem: string) => `# This is a Ruby WASI playground
+const mainRbHeader = (gem: string | null) => `# This is a Ruby WASI playground
 # You can run any Ruby code here and see the result
 # You can also install gems using a Gemfile and the "Bundle install" button.
-
-require "${gem}"
-`;
+${gem ? `\nrequire "${gem}"\n` : ""}`;
 
 const mainRb = `${mainRbHeader(defaultGem)}
 # RunRuby.dev comes with a WASI-compatible Faraday adapter
@@ -36,11 +34,16 @@ gem "${gem}"
 `
 );
 
-const buildStarter = ({ gem, main }: { gem: string, main: string }) => {
-  return [
+const buildStarter = ({ gem, main }: { gem: string | null, main: string }) => {
+  const result = [
     { filename: "main.rb", content: main },
-    { filename: "Gemfile", content: gemfileContents(gem) }
   ];
+
+  if (gem) {
+    result.push({ filename: "Gemfile", content: gemfileContents(gem) })
+  }
+
+  return result;
 };
 
 export const composeInitialFS = async () => {
@@ -56,10 +59,19 @@ export const composeInitialFS = async () => {
     }
   }
 
-  const gem = getQueryParam("gem");
-  if (gem) {
-    return { files: buildStarter({ gem, main: mainRbHeader(gem) }) };
+  return buildMainRB();
+};
+
+const buildMainRB = () => {
+  const initialGem = getQueryParam("gem");
+  const initialCode = getQueryParam("code");
+
+  if (!initialGem && !initialCode) {
+    return { files: buildStarter({ gem: defaultGem, main: mainRb }) };
   }
 
-  return { files: buildStarter({ gem: defaultGem, main: mainRb }) };
+  const code = initialCode ? decodeURIComponent(atob(initialCode)) : "";
+  const main = mainRbHeader(initialGem) + "\n" + code;
+
+  return { files: buildStarter({ gem: initialGem, main }) };
 };
