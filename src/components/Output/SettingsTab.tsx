@@ -15,7 +15,7 @@ function findDirectory(dir: DirectoryContents, s: string) {
   let current = dir;
   for (const part of parts) {
 
-    if (!("contents" in current[part])) {
+    if (!(current[part] && "contents" in current[part])) {
       return undefined;
     }
     current = (current[part] as MarshaledDirectory).contents;

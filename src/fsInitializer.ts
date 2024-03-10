@@ -1,11 +1,28 @@
 import importFromGist from "./gist.ts";
 
+export const getQueryParam = (key: string) => {
+  const url = new URL(window.location.href);
+  const params = new URLSearchParams(url.search);
+  return params.get(key);
+};
+
 const defaultGem = "octokit";
 
-const mainRbHeader = (gem: string | null) => `# This is a Ruby WASI playground
+const description = `# This is a Ruby WASI playground
 # You can run any Ruby code here and see the result
-# You can also install gems using a Gemfile and the "Bundle install" button.
-${gem ? `\nrequire "${gem}"\n` : ""}`;
+# You can also install gems using a Gemfile and the "Bundle install" button.`;
+
+const mainRbHeader = (gem: string | null) => {
+  const strings: string[] = [];
+  if (getQueryParam("embed") !== "1") {
+    strings.push(description);
+  }
+  if (gem) {
+    strings.push(`require "${gem.split("@")[0]}"\n`);
+  }
+
+  return strings.join("\n");
+};
 
 const mainRb = `${mainRbHeader(defaultGem)}
 # RunRuby.dev comes with a WASI-compatible Faraday adapter
@@ -21,26 +38,20 @@ user = client.user("matz")
 pp({login: user.login, name: user.name, company: user.company})
 `;
 
-export const getQueryParam = (key: string) => {
-  const url = new URL(window.location.href);
-  const params = new URLSearchParams(url.search);
-  return params.get(key);
-};
-
 const gemfileContents = (gem: string) => (
   `source "https://rubygems.org"
 
-gem "${gem}"
+gem "${gem.split("@")[0]}", "${gem.split("@")[1] || ">= 0"}"
 `
 );
 
 const buildStarter = ({ gem, main }: { gem: string | null, main: string }) => {
   const result = [
-    { filename: "main.rb", content: main },
+    { filename: "main.rb", content: main }
   ];
 
   if (gem) {
-    result.push({ filename: "Gemfile", content: gemfileContents(gem) })
+    result.push({ filename: "Gemfile", content: gemfileContents(gem) });
   }
 
   return result;
@@ -62,6 +73,10 @@ export const composeInitialFS = async () => {
   return buildMainRB();
 };
 
+export const urlSafeAtob = (str: string) => {
+  return decodeURIComponent(atob(str.replace(/-/g, "+").replace(/_/g, "/")));
+};
+
 const buildMainRB = () => {
   const initialGem = getQueryParam("gem");
   const initialCode = getQueryParam("code");
@@ -70,7 +85,7 @@ const buildMainRB = () => {
     return { files: buildStarter({ gem: defaultGem, main: mainRb }) };
   }
 
-  const code = initialCode ? decodeURIComponent(atob(initialCode)) : "";
+  const code = initialCode ? urlSafeAtob(initialCode) : "";
   const main = mainRbHeader(initialGem) + "\n" + code;
 
   return { files: buildStarter({ gem: initialGem, main }) };

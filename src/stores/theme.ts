@@ -7,7 +7,6 @@ const THEME_KEY = "theme";
 export const $theme = atom<Theme>("system");
 
 export const setTheme = action($theme, "set", (store, theme: Theme) => {
-
   document.documentElement.setAttribute(THEME_KEY, theme);
   store.set(theme);
   localStorage.setItem(THEME_KEY, theme);
