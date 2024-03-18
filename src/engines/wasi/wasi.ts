@@ -1,5 +1,4 @@
 import { RubyVM } from "@ruby/wasm-wasi";
-import wasmUrl from "@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm?url";
 import { Fd, PreopenDirectory, File, WASI, OpenFile, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
 
 import { wasiImports } from "./wasiImports";
@@ -8,6 +7,7 @@ import { generateRubyStubsDir } from "../../stubs";
 import { writeFiles } from "./editorFS.ts";
 import { composeInitialFS } from "../../fsInitializer.ts";
 
+const wasmUrl = "https://cdn.jsdelivr.net/npm/@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm";
 const wasmModulePromise = fetch(wasmUrl).then((response) => WebAssembly.compileStreaming(response));
 
 const rubyStubsPath = "/usr/local/lib/ruby_gems";
