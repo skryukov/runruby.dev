@@ -19,6 +19,8 @@ import { composeInitialFS } from "../../fsInitializer.ts";
 const wasmModulePromise = fetch(wasmUrl).then((response) =>
   WebAssembly.compileStreaming(response),
 );
+//const wasmUrl = "https://cdn.jsdelivr.net/npm/@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm";
+//const wasmModulePromise = fetch(wasmUrl).then((response) => WebAssembly.compileStreaming(response));
 
 const rubyStubsPath = "/usr/local/lib/ruby_gems";
 const emptyMap = new Map<string, Inode>();
