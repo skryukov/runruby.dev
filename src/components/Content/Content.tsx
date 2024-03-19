@@ -12,7 +12,7 @@ import { $menu, toggleMenu } from "../../stores/menu.ts";
 import { useStore } from "@nanostores/react";
 
 export const Content = () => {
-  const { loading, log, result, runVM } = useVM();
+  const { loading, runVM } = useVM();
 
   const gemsDirContent = useLiveQuery(
     () => db.fsCache.get({key: "gemsDir"}),
@@ -47,10 +47,7 @@ export const Content = () => {
         />
       </div>
       <div className={cs.output}>
-        <Output
-          log={log}
-          result={result}
-        />
+        <Output />
       </div>
     </div>
   );

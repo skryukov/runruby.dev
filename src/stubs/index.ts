@@ -1,6 +1,6 @@
 import { Directory, File, PreopenDirectory } from "@bjorn3/browser_wasi_shim";
 
-const rubyStubs = import.meta.glob("./**/*.rb", { as: "raw", eager: true });
+const rubyStubs = import.meta.glob("./**/*.rb", { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
 
 const getDirectory = (paths: string[], rootDir: PreopenDirectory) => {
   return paths.reduce((acc, pathPart) => {

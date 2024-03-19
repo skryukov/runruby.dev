@@ -13,7 +13,6 @@ export default defineConfig({
           'dexie': ['dexie', 'dexie-react-hooks'],
           'jszip': ['jszip'],
           'editor': ['@monaco-editor/react'],
-          'wasi': ['@bjorn3/browser_wasi_shim', '@ruby/wasm-wasi', '@ruby/3.3-wasm-wasi'],
         },
       },
     },
