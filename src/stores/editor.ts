@@ -1,4 +1,4 @@
-import { action, atom, computed, map, onMount } from "nanostores";
+import { atom, computed, map, onMount } from "nanostores";
 import { Entity, sortChildren } from "../fsMap.ts";
 import { TreeApi } from "react-arborist";
 import { File } from "@bjorn3/browser_wasi_shim";
@@ -26,28 +26,20 @@ onMount($editor, () => {
   initializeFS().then(refreshTreeData).then(cleanDirty);
 });
 
-export const refreshTreeData = action($editor, "refreshTreeData", (store) => {
-  store.setKey("treeData", sortChildren(workDir.dir, ""));
-});
+export const refreshTreeData = () => {
+  $editor.setKey("treeData", sortChildren(workDir.dir, ""));
+};
 
-export const setCurrentNodeId = action(
-  $editor,
-  "setCurrentNodeId",
-  (store, id: string | null) => {
-    store.setKey("currentNodeId", id);
-  },
-);
+export const setCurrentNodeId = (id: string | null) => {
+  $editor.setKey("currentNodeId", id);
+};
 
-export const setCode = action(
-  $editor,
-  "setCode",
-  (store, code: string | null) => {
-    const currentNodeId = store.get().currentNodeId;
-    if (currentNodeId === null) return;
+export const setCode = (code: string | null) => {
+  const currentNodeId = $editor.get().currentNodeId;
+  if (currentNodeId === null) return;
 
-    store.setKey("code", code);
-  },
-);
+  $editor.setKey("code", code);
+};
 
 export const setDirty = (path: string) => {
   const newDirtyFiles = [...new Set([...$editor.get().dirtyFiles, path])];
@@ -58,13 +50,9 @@ export const cleanDirty = () => {
   $editor.setKey("dirtyFiles", []);
 };
 
-export const setTree = action(
-  $editor,
-  "setTree",
-  (store, tree: TreeApi<Entity>) => {
-    store.setKey("tree", tree);
-  },
-);
+export const setTree = (tree: TreeApi<Entity>) => {
+  $editor.setKey("tree", tree);
+};
 
 export const currentFilePathStore = computed(
   [$editor, $editorVersion],
