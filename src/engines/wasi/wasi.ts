@@ -52,7 +52,7 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   await ruby.setInstance(instance);
 
   wasi.initialize(instance as never);
-  ruby.initialize(["ruby.wasm", "-e_=0", `-I${rubyStubsPath}`, `-rdefault_stubs`]);
+  ruby.initialize(["ruby.wasm", "-e_=0", "-EUTF-8", `-I${rubyStubsPath}`, `-rdefault_stubs`]);
 
   return ruby;
 }
