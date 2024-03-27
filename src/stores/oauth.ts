@@ -13,7 +13,7 @@ export const $oauth = map<OAuthStoreValue>({
 onSet($oauth, ({ changed, newValue }) => {
   if (changed === "code" && newValue.code) {
     fetch(
-      `https://worker.runruby.dev/api/auth/github?code=${newValue.code}`,
+      `${import.meta.env.VITE_WORKER_URL}/api/auth/github?code=${newValue.code}`,
       {
         credentials: "include"
       }).then(fetchUser)
@@ -37,7 +37,7 @@ export const $currentUser = map<CurrentUserStoreValue>({
 });
 
 const fetchUser = () => {
-  fetch("https://worker.runruby.dev/api/user", {
+  fetch(`${import.meta.env.VITE_WORKER_URL}/api/user`, {
     credentials: "include"
   }).then((res) => res.json()).then((data) => {
       $currentUser.set({ username: data.login, avatarUrl: data.avatar_url, id: data.id });
@@ -50,7 +50,7 @@ onMount($currentUser, () => {
 });
 
 export const signOut = () => {
-  fetch("https://worker.runruby.dev/api/auth/sign_out", {
+  fetch(`${import.meta.env.VITE_WORKER_URL}/api/auth/sign_out`, {
     credentials: "include"
   }).then(() => {
     $currentUser.set({ id: undefined });

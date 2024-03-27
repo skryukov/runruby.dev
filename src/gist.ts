@@ -35,8 +35,9 @@ export default async function importFromGist(gistUrl: string): Promise<Gist> {
     throw new Error(`Gist has no files`);
   }
 
+  const files: GistFile[] = Object.values(data.files);
   const res: Gist = {
-    files: Object.values(data.files),
+    files: files.map((f): GistFile => ({...f, filename: f.filename.split("$$").join("/")})),
     description: data.description,
     username: data.owner.login,
     userId: data.owner.id,

@@ -32,7 +32,7 @@ const files = () => {
 
   walkFileTree(({ filename, contents }) => {
     if (contents) {
-      res[filename.replace("/", "$$")] = { content: contents };
+      res[filename.split("/").join("$$")] = { content: contents };
     }
   });
 
@@ -41,7 +41,7 @@ const files = () => {
 
 export const saveGist = () => {
   $gistLoading.set(true);
-  fetch("https://worker.runruby.dev/api/gists", {
+  fetch(`${import.meta.env.VITE_WORKER_URL}/api/gists`, {
     method: "POST",
     credentials: "include",
     body: JSON.stringify({
@@ -65,7 +65,7 @@ export const saveGist = () => {
 
 export const updateGist = (id: string) => {
   $gistLoading.set(true);
-  fetch(`https://worker.runruby.dev/api/gists/${id}`, {
+  fetch(`${import.meta.env.VITE_WORKER_URL}/api/gists/${id}`, {
     method: "PATCH",
     credentials: "include",
     body: JSON.stringify({
@@ -88,7 +88,7 @@ export const updateGist = (id: string) => {
 
 export const forkGist = (id: string) => {
   $gistLoading.set(true);
-  fetch(`https://worker.runruby.dev/api/gists/${id}/forks`, {
+  fetch(`${import.meta.env.VITE_WORKER_URL}/api/gists/${id}/forks`, {
     method: "POST",
     credentials: "include"
   }).then((res) => res.json()).then((data) => {
