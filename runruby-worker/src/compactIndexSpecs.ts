@@ -21,14 +21,14 @@ const checkVersion = (options: GemDependency[], key: string, version: string): b
       if (match) {
         const operator = match[1];
         const majorVersion = parseInt(match[2]);
-        if ((operator === '~>' && majorVersion < parseInt(version)) || (operator === '<' && majorVersion <= parseInt(version))) {
+        if ((operator === "~>" && majorVersion < parseInt(version)) || (operator === "<" && majorVersion <= parseInt(version))) {
           return true;
         }
       }
     }
   }
   return false;
-}
+};
 
 export default async (request: IRequest) => {
   const depth = request.query.depth;
@@ -36,11 +36,14 @@ export default async (request: IRequest) => {
   if (typeof request.query.gems !== "string") {
     throw new StatusError(422, "Gems required.");
   }
+
+  let subrequests = 0;
+
   const gemNames = request.query.gems.split(",");
   const gemInfo: GemInfo[] = [];
   let completeGems: string[] = [];
-  let remainingGems = gemNames.slice();
-  let subrequests = 0;
+  let remainingGems = gemNames.slice(0, REQUESTS_LIMIT - subrequests);
+  const gemsOverflow = remainingGems.slice(REQUESTS_LIMIT - subrequests);
 
   while (remainingGems.length > 0 && (subrequests + remainingGems.length) <= REQUESTS_LIMIT) {
     const depFetches = remainingGems.map(async (gem) => {
@@ -97,5 +100,9 @@ export default async (request: IRequest) => {
     remainingGems = nextGems.filter(gem => !completeGems.includes(gem));
   }
 
-  return { specs: gemInfo.map(Object.values), completeGems, remainingGems };
+  return {
+    specs: gemInfo.map(Object.values),
+    completeGems,
+    remainingGems: gemsOverflow.concat(remainingGems).filter(gem => !completeGems.includes(gem))
+  };
 };
