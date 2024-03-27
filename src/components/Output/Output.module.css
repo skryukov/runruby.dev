@@ -1,13 +1,18 @@
-.editorText {
+.tab {
   padding: 0 16px;
   flex: 1;
   overflow-y: scroll;
+  display: none;
 }
 
 @media (max-width: 1280px) {
-  .editorText {
+  .tab {
     padding: 0 8px;
   }
+}
+
+.activeTab {
+  display: block;
 }
 
 .switchButtons {

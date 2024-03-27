@@ -1,8 +1,9 @@
 import { atom, computed, map, onMount } from "nanostores";
-import { Entity, sortChildren } from "../fsMap.ts";
+import { Entity } from "../fsMap.ts";
 import { TreeApi } from "react-arborist";
 import { File } from "@bjorn3/browser_wasi_shim";
-import { initializeFS, workDir } from "../engines/wasi/wasi.ts";
+import { initializeFS } from "../engines/wasi/wasi.ts";
+import { webcontainerInstance } from "../engines/webcontainers";
 
 type EditorStoreValue = {
   currentNodeId: string | null;
@@ -26,8 +27,26 @@ onMount($editor, () => {
   initializeFS().then(refreshTreeData).then(cleanDirty);
 });
 
-export const refreshTreeData = () => {
-  $editor.setKey("treeData", sortChildren(workDir.dir, ""));
+export const getDirFiles = async (path: string) => {
+  while (!webcontainerInstance) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+
+  const files = await webcontainerInstance?.fs?.readdir(path, { withFileTypes: true });
+  const result: Entity[] = [];
+  for (const file of files) {
+    result.push({
+      id: file.name,
+      name: file.name,
+      fullPath: `${path}/${file.name}`,
+      children: file.isDirectory() ? await getDirFiles(`${path}/${file.name}`) : undefined
+    });
+  }
+  return result;
+};
+
+export const refreshTreeData = async () => {
+  $editor.setKey("treeData", await getDirFiles(""));
 };
 
 export const setCurrentNodeId = (id: string | null) => {
@@ -68,7 +87,7 @@ export const currentFileStore = computed($editor, (editor) => {
   const currentNode = editor.tree?.get(editor.currentNodeId);
   if (!currentNode) return null;
 
-  const currentFile = currentNode.data.object;
+  const currentFile = currentNode.data;
   if (currentFile instanceof File) {
     return currentFile;
   } else {

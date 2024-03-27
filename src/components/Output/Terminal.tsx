@@ -1,23 +1,25 @@
-import { useEffect, useRef } from "react";
-import { Terminal as Xterm } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
-import "xterm/css/xterm.css";
+import { useEffect, useState } from "react";
+import { Terminal as Xterm } from "@xterm/xterm";
+import "@xterm/xterm/css/xterm.css";
 
-const xterm = new Xterm({
-  convertEol: true
-});
-const fitAddon = new FitAddon();
+import { startShell } from "../../engines/webcontainers";
 
 export const Terminal = () => {
-  const terminalRef = useRef<HTMLDivElement>(null);
+  const [terminalRef, setTerminalRef] = useState<HTMLDivElement>();
 
   useEffect(() => {
-    if (terminalRef.current) {
-      xterm.loadAddon(fitAddon);
-      xterm.open(terminalRef.current);
-      fitAddon.fit();
-    }
+    if (!terminalRef) return;
+    const xterm = new Xterm({
+      convertEol: true
+    });
+    startShell(xterm).then(() => {
+      xterm.open(terminalRef);
+    });
+
+    return () => {
+      xterm.dispose();
+    };
   }, [terminalRef]);
 
-  return <div ref={terminalRef} />;
+  return <div ref={(node) => node && setTerminalRef(node)} />;
 };
