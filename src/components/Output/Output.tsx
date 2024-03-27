@@ -27,16 +27,14 @@ export const Output = () => {
           Settings
         </button>
       </div>
-      <div className={cs.editorText}>
-        {
-          (activeTab === "terminal") ? (
-            <Terminal />
-          ) : (activeTab === "info") ? (
-            <InfoTab />
-          ) : (
-            <SettingsTab />
-          )
-        }
+      <div className={`${cs.tab} ${activeTab === 'terminal' ? cs.activeTab : ''}`}>
+        <Terminal />
+      </div>
+      <div className={`${cs.tab} ${activeTab === "info" ? cs.activeTab : ""}`}>
+        <InfoTab />
+      </div>
+      <div className={`${cs.tab} ${activeTab === 'settings' ? cs.activeTab : ''}`}>
+        <SettingsTab />
       </div>
     </>
   )
