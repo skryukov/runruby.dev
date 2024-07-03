@@ -1,6 +1,6 @@
 import { RubyVM } from "@ruby/wasm-wasi";
 import wasmUrl from "@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm?url";
-import { Fd, PreopenDirectory, File, WASI, OpenFile, ConsoleStdout } from "@bjorn3/browser_wasi_shim";
+import {Fd, PreopenDirectory, File, WASI, OpenFile, ConsoleStdout, Inode} from "@bjorn3/browser_wasi_shim";
 
 import { wasiImports } from "./wasiImports";
 import { TRunParams, TSetString } from "../types";
@@ -11,10 +11,11 @@ import { composeInitialFS } from "../../fsInitializer.ts";
 const wasmModulePromise = fetch(wasmUrl).then((response) => WebAssembly.compileStreaming(response));
 
 const rubyStubsPath = "/usr/local/lib/ruby_gems";
+const emptyMap = new Map<string, Inode>();
 
-export const gemsDir = new PreopenDirectory("/gems", {});
-export const bundleDir = new PreopenDirectory("/.bundle", {});
-export const workDir: PreopenDirectory = new PreopenDirectory("/", {});
+export const gemsDir = new PreopenDirectory("/gems", emptyMap);
+export const bundleDir = new PreopenDirectory("/.bundle", emptyMap);
+export const workDir: PreopenDirectory = new PreopenDirectory("/", emptyMap);
 
 let FSInitialized = false;
 

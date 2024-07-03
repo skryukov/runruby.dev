@@ -42,6 +42,10 @@ export const Menu = () => {
     const path = `${parentNode ? parentNode.data.fullPath : ""}/${name}`;
     const object = (type === "leaf") ? writeFile(path, "") : mkdir(path);
 
+    if (!object) {
+      throw new Error(`Failed creating ${type === "leaf" ? "file" : "directory"} in the path: ${path}`);
+    }
+
     const id = nanoid();
     idsMap.set(object, id);
     refreshTreeData();

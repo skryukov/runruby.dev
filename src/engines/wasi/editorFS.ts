@@ -44,21 +44,28 @@ export const rename = (oldPath: string, newPath: string) => {
   const parts = oldPath.split("/");
   const oldName = parts.pop() as string;
   const oldDir = findDir(parts);
-  if (oldDir.contents[oldName] === undefined) {
+  if (oldDir.contents.get(oldName) === undefined) {
     throw new Error(`File or directory with name ${oldName} doesn't exist`);
   }
 
   const newParts = newPath.split("/");
   const newName = newParts.pop() as string;
   const newDir = findDir(newParts);
-  if (newDir.contents[newName] !== undefined) {
+  if (newDir.contents.get(newName) !== undefined) {
     throw new Error(`File or directory with name ${newName} already exists`);
   }
 
-  newDir.contents[newName] = oldDir.contents[oldName];
-  delete oldDir.contents[oldName];
+  const inode = oldDir.contents.get(oldName);
+  if (inode !== undefined) {
+    newDir.contents.set(newName, inode);
+    oldDir.contents.delete(oldName);
+  } else {
+    console.error(`${oldName} not found in oldDir.contents`);
 
-  if (newDir.contents[newName] instanceof File) {
+    return false
+  }
+
+  if (newDir.contents.get(newName) instanceof File) {
     setDirty(newPath);
   }
 
@@ -72,13 +79,13 @@ export const mkdir = (path: string) => {
 
   if (!name) return dir;
 
-  if (dir.contents[name] !== undefined) {
+  if (dir.contents.get(name) !== undefined) {
     throw new Error(`File or directory with name ${name} already exists`);
   }
 
-  dir.contents[name] = new Directory({});
+  dir.contents.set(name, new Directory([]));
 
-  return dir.contents[name] as Directory;
+  return dir.contents.get(name) as Directory;
 };
 
 export const writeFile = (path: string, contents: string) => {
@@ -86,19 +93,19 @@ export const writeFile = (path: string, contents: string) => {
   const name = parts.pop() as string;
   const dir = findDir(parts);
 
-  if (dir.contents[name] instanceof Directory) {
+  if (dir.contents.get(name) instanceof Directory) {
     throw new Error(`File or directory with name ${name} already exists`);
   }
 
-  if (dir.contents[name] === undefined) {
-    dir.contents[name] = new File(encode(contents));
+  if (dir.contents.get(name) === undefined) {
+    dir.contents.set(name, new File(encode(contents)));
   } else {
-    (dir.contents[name] as File).data = encode(contents);
+    (dir.contents.get(name) as File).data = encode(contents);
   }
 
   setDirty(path);
 
-  return dir.contents[name];
+  return dir.contents.get(name) as File;
 };
 
 export const rm = (path: string) => {
@@ -106,22 +113,22 @@ export const rm = (path: string) => {
   const name = parts.pop() as string;
   const dir = findDir(parts);
 
-  if (dir.contents[name] === undefined) {
+  if (dir.contents.get(name) === undefined) {
     throw new Error(`File or directory with name ${name} doesn't exist`);
   }
 
   setDirty(path);
 
-  delete dir.contents[name];
+  dir.contents.delete(name);
 };
 
 const findDir = (parts: string[]) => {
   return parts.reduce((dir, part) => {
     if (!part) return dir;
 
-    if (!dir.contents[part]) {
-      dir.contents[part] = new Directory({});
+    if (!dir.contents.get(part)) {
+      dir.contents.set(part,  new Directory([]));
     }
-    return dir.contents[part] as Directory;
+    return dir.contents.get(part) as Directory;
   }, workDir.dir);
 };
