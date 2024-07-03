@@ -9,7 +9,7 @@ const { withEncryptedSession, setSessionCookie } = createSession();
 const { preflight, corsify } = createCors({
   methods: ["GET", "PATCH", "POST"],
   // TODO: use env
-  origins: ["http://localhost:5173", "https://runruby.dev", "https://local.runruby.dev:5173"],
+  origins: ["http://localhost:5173", "https://runruby.dev", "https://local.runruby.dev:5173", "https://localhost:5173"],
   headers: {
     "Access-Control-Allow-Credentials": "true"
   }

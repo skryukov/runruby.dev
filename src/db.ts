@@ -30,14 +30,15 @@ export interface MarshaledDirectory {
 }
 
 export const mapToEntities = (data: DirectoryContents) => {
-  const result: { [key: string]: File | Directory } = {};
+  const result = new Map<string, File | Directory>();
 
   Object.entries(data).forEach(([key, value]) => {
     if ("data" in value) {
-      result[key] = new File(value.data);
+      result.set(key, new File(value.data));
     } else {
-      result[key] = new Directory(mapToEntities(value.contents));
+      result.set(key, new Directory(mapToEntities(value.contents)));
     }
   });
+
   return result;
 };

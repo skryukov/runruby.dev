@@ -33,7 +33,6 @@ Octokit.middleware.adapter :js
 # Now we can use Octokit as we would in a normal Ruby environment
 client = Octokit::Client.new
 user = client.user("matz")
-
 # And it just works 🚀
 pp({login: user.login, name: user.name, company: user.company})
 `;
