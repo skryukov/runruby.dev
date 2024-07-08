@@ -3,18 +3,19 @@ import { atom, map, onSet } from "nanostores";
 import { walkFileTree } from "../engines/wasi/editorFS.ts";
 import { cleanDirty } from "./editor.ts";
 
-type GistStoreValue = {
-  id: undefined;
-} |
-  {
-    id: string;
-    username: string;
-    avatarUrl: string;
-    description: string;
-    files: { filename: string, content: string }[];
-  }
+type GistStoreValue =
+  | {
+      id: undefined;
+    }
+  | {
+      id: string;
+      username: string;
+      avatarUrl: string;
+      description: string;
+      files: { filename: string; content: string }[];
+    };
 export const $gist = map<GistStoreValue>({
-  id: undefined
+  id: undefined,
 });
 
 export const $gistLoading = atom<boolean>(false);
@@ -47,20 +48,21 @@ export const saveGist = () => {
     body: JSON.stringify({
       description: "RunRuby.dev Gist",
       public: false,
-      files: files()
-    })
-  }).then((res) => res.json()).then((data) => {
+      files: files(),
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
       $gist.set({
         ...$gist.get(),
         id: data.id,
         description: data.description,
         username: data.owner.login,
-        avatarUrl: data.owner.avatar_url
+        avatarUrl: data.owner.avatar_url,
       });
       $gistLoading.set(false);
       cleanDirty();
-    }
-  );
+    });
 };
 
 export const updateGist = (id: string) => {
@@ -70,36 +72,38 @@ export const updateGist = (id: string) => {
     credentials: "include",
     body: JSON.stringify({
       // description: "RunRuby.dev Gist",
-      files: files()
-    })
-  }).then((res) => res.json()).then((data) => {
+      files: files(),
+    }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
       $gist.set({
         ...$gist.get(),
         id: data.id,
         description: data.description,
         username: data.owner.login,
-        avatarUrl: data.owner.avatar_url
+        avatarUrl: data.owner.avatar_url,
       });
       $gistLoading.set(false);
       cleanDirty();
-    }
-  );
+    });
 };
 
 export const forkGist = (id: string) => {
   $gistLoading.set(true);
   fetch(`${import.meta.env.VITE_WORKER_URL}/api/gists/${id}/forks`, {
     method: "POST",
-    credentials: "include"
-  }).then((res) => res.json()).then((data) => {
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then((data) => {
       $gist.set({
         ...$gist.get(),
         id: data.id,
         description: data.description,
         username: data.owner.login,
-        avatarUrl: data.owner.avatar_url
+        avatarUrl: data.owner.avatar_url,
       });
-    $gistLoading.set(false);
-    }
-  );
+      $gistLoading.set(false);
+    });
 };

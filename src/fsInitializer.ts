@@ -33,21 +33,19 @@ Octokit.middleware.adapter :js
 # Now we can use Octokit as we would in a normal Ruby environment
 client = Octokit::Client.new
 user = client.user("matz")
+
 # And it just works 🚀
 pp({login: user.login, name: user.name, company: user.company})
 `;
 
-const gemfileContents = (gem: string) => (
+const gemfileContents = (gem: string) =>
   `source "https://rubygems.org"
 
 gem "${gem.split("@")[0]}", "${gem.split("@")[1] || ">= 0"}"
-`
-);
+`;
 
-const buildStarter = ({ gem, main }: { gem: string | null, main: string }) => {
-  const result = [
-    { filename: "main.rb", content: main }
-  ];
+const buildStarter = ({ gem, main }: { gem: string | null; main: string }) => {
+  const result = [{ filename: "main.rb", content: main }];
 
   if (gem) {
     result.push({ filename: "Gemfile", content: gemfileContents(gem) });

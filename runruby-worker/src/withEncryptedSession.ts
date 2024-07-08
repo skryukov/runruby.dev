@@ -21,24 +21,24 @@ async function encrypt(text: string, secret: string) {
     Buffer.from(await getKeyFromSecret(secret, crypto), "hex"),
     {
       name: "AES-GCM",
-      length: 256
+      length: 256,
     },
     true,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
 
   const ciphertext = await crypto.subtle.encrypt(
     {
       name: "AES-GCM",
-      iv
+      iv,
     },
     secretKey,
-    encodedPlaintext
+    encodedPlaintext,
   );
 
   return {
     ciphertext: Buffer.from(ciphertext).toString("base64"),
-    iv: Buffer.from(iv).toString("base64")
+    iv: Buffer.from(iv).toString("base64"),
   };
 }
 
@@ -48,19 +48,19 @@ async function decrypt(ciphertext: string, iv: string, secret: string) {
     Buffer.from(await getKeyFromSecret(secret, crypto), "hex"),
     {
       name: "AES-GCM",
-      length: 256
+      length: 256,
     },
     true,
-    ["encrypt", "decrypt"]
+    ["encrypt", "decrypt"],
   );
 
   const cleartext = await crypto.subtle.decrypt(
     {
       name: "AES-GCM",
-      iv: Buffer.from(iv, "base64")
+      iv: Buffer.from(iv, "base64"),
     },
     secretKey,
-    Buffer.from(ciphertext, "base64")
+    Buffer.from(ciphertext, "base64"),
   );
 
   return new TextDecoder().decode(cleartext);

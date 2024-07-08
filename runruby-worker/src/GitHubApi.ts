@@ -1,7 +1,7 @@
 export type IGistParams = {
   description: string;
-  files: { [name: string]: { content: string } }
-}
+  files: { [name: string]: { content: string } };
+};
 
 export class GitHubApi {
   private static oauthEndpoint = "https://github.com/login/oauth/access_token";
@@ -9,15 +9,15 @@ export class GitHubApi {
   private static defaultHeaders = {
     "User-Agent": "Cloudflare Worker",
     "Content-Type": "application/json",
-    "Accept": "application/vnd.github+json",
-    "X-GitHub-Api-Version": "2022-11-28"
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28",
   };
 
-  static oauth(params: { code: string, client_id: string, client_secret: string }) {
+  static oauth(params: { code: string; client_id: string; client_secret: string }) {
     return fetch(this.oauthEndpoint, {
       method: "POST",
       headers: this.defaultHeaders,
-      body: JSON.stringify(params)
+      body: JSON.stringify(params),
     });
   }
 
@@ -29,7 +29,7 @@ export class GitHubApi {
 
   async user() {
     const response = await fetch(`${GitHubApi.apiEndpoint}/user`, {
-      headers: this.headers()
+      headers: this.headers(),
     });
     return await response.json();
   }
@@ -37,32 +37,31 @@ export class GitHubApi {
   async createGist(params: IGistParams) {
     return await this.fetch("gists", {
       method: "POST",
-      body: JSON.stringify(params)
+      body: JSON.stringify(params),
     });
   }
 
   async updateGist(id: string, params: IGistParams) {
     return await this.fetch(`gists/${id}`, {
       method: "PATCH",
-      body: JSON.stringify(params)
+      body: JSON.stringify(params),
     });
   }
 
   async forkGist(id: string) {
     return await this.fetch(`gists/${id}/forks`, {
-      method: "POST"
+      method: "POST",
     });
   }
 
   private async fetch(path: string, options: RequestInit = {}) {
     const response = await fetch(`${GitHubApi.apiEndpoint}/${path}`, {
-        ...options,
-        headers: {
-          ...this.headers(),
-          ...options.headers
-        }
-      }
-    );
+      ...options,
+      headers: {
+        ...this.headers(),
+        ...options.headers,
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`Request to ${path} failed with status ${response.status}`);
@@ -74,7 +73,7 @@ export class GitHubApi {
   private headers() {
     return {
       ...GitHubApi.defaultHeaders,
-      "Authorization": `token ${this.token}`
+      Authorization: `token ${this.token}`,
     };
   }
 }

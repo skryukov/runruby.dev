@@ -13,7 +13,7 @@ export type Gist = {
   username: string;
   userId: number;
   avatarUrl: string;
-}
+};
 
 export default async function importFromGist(gistUrl: string): Promise<Gist> {
   const id = gistUrl.split("/").pop();
@@ -37,11 +37,13 @@ export default async function importFromGist(gistUrl: string): Promise<Gist> {
 
   const files: GistFile[] = Object.values(data.files);
   const res: Gist = {
-    files: files.map((f): GistFile => ({...f, filename: f.filename.split("$$").join("/")})),
+    files: files.map(
+      (f): GistFile => ({ ...f, filename: f.filename.split("$$").join("/") }),
+    ),
     description: data.description,
     username: data.owner.login,
     userId: data.owner.id,
-    avatarUrl: data.owner.avatar_url
+    avatarUrl: data.owner.avatar_url,
   };
 
   $gist.set({ id, ...res });

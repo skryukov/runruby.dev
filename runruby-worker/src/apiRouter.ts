@@ -11,14 +11,14 @@ const authGitHub = async (request: IRequest, env: Env) => {
   const response = await GitHubApi.oauth({
     client_id: env.GITHUB_CLIENT_ID,
     client_secret: env.GITHUB_CLIENT_SECRET,
-    code
+    code,
   });
 
   if (!response.ok) {
     throw new StatusError(response.status, await response.text());
   }
 
-  const data = await response.json() as { access_token: string };
+  const data = (await response.json()) as { access_token: string };
 
   if (data.access_token) {
     request.setSession({ ...request.getSession(), githubAccessToken: data.access_token });
@@ -42,7 +42,7 @@ const createOrUpdateGist = async (request: IRequest) => {
 
   const github = new GitHubApi({ token: request.getSession().githubAccessToken });
 
-  const gistParams = await request.json() as IGistParams;
+  const gistParams = (await request.json()) as IGistParams;
 
   if (request.params.id) {
     return await github.updateGist(request.params.id, gistParams);
@@ -58,8 +58,7 @@ const forkGist = async (request: IRequest) => {
   const github = new GitHubApi({ token: request.getSession().githubAccessToken });
 
   return await github.forkGist(request.params.id);
-
-}
+};
 
 const signOut = (request: IRequest) => {
   request.setSession({});

@@ -1,47 +1,47 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
-  <style>
-    body {
-      height: 100%;
-      background-color: #F5F5F5;
-      @media (prefers-color-scheme: dark) {
-        background-color: #1a1a1a
+  <head>
+    <style>
+      body {
+        height: 100%;
+        background-color: #f5f5f5;
+        @media (prefers-color-scheme: dark) {
+          background-color: #1a1a1a;
+        }
       }
-    }
-  </style>
-  <meta charset="utf-8">
-  <title>Single Page Apps for GitHub Pages</title>
-  <script type="text/javascript">
-    // Single Page Apps for GitHub Pages
-    // MIT License
-    // https://github.com/rafgraph/spa-github-pages
-    // This script takes the current url and converts the path and query
-    // string into just a query string, and then redirects the browser
-    // to the new url with only a query string and hash fragment,
-    // e.g. https://www.foo.tld/one/two?a=b&c=d#qwe, becomes
-    // https://www.foo.tld/?/one/two&a=b~and~c=d#qwe
-    // Note: this 404.html file must be at least 512 bytes for it to work
-    // with Internet Explorer (it is currently > 512 bytes)
+    </style>
+    <meta charset="utf-8" />
+    <title>Single Page Apps for GitHub Pages</title>
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // MIT License
+      // https://github.com/rafgraph/spa-github-pages
+      // This script takes the current url and converts the path and query
+      // string into just a query string, and then redirects the browser
+      // to the new url with only a query string and hash fragment,
+      // e.g. https://www.foo.tld/one/two?a=b&c=d#qwe, becomes
+      // https://www.foo.tld/?/one/two&a=b~and~c=d#qwe
+      // Note: this 404.html file must be at least 512 bytes for it to work
+      // with Internet Explorer (it is currently > 512 bytes)
 
-    const l = window.location;
-    const host = l.protocol + "//" + l.hostname + (l.port ? ":" + l.port : "");
-    let search = (l.search ? l.search.slice(1) : "");
-    const paths = l.pathname.slice(1).split("/");
-    if (paths[0] === "callback" || paths[0] === "404.html") {
-      const bc = new BroadcastChannel("oauth")
-      bc.postMessage(search);
-      bc.close();
-      window.close();
-    } else if (paths[0] === "gist") {
-      search = "gist=" + paths[1] + (search ? "&" + search : "");
-    } else if (paths[0]) {
-      search = "gem=" + paths[0] + (search ? "&" + search : "");
-    }
+      const l = window.location;
+      const host =
+        l.protocol + "//" + l.hostname + (l.port ? ":" + l.port : "");
+      let search = l.search ? l.search.slice(1) : "";
+      const paths = l.pathname.slice(1).split("/");
+      if (paths[0] === "callback" || paths[0] === "404.html") {
+        const bc = new BroadcastChannel("oauth");
+        bc.postMessage(search);
+        bc.close();
+        window.close();
+      } else if (paths[0] === "gist") {
+        search = "gist=" + paths[1] + (search ? "&" + search : "");
+      } else if (paths[0]) {
+        search = "gem=" + paths[0] + (search ? "&" + search : "");
+      }
 
-    l.replace(host + "/?" + search + l.hash);
-  </script>
-</head>
-<body>
-</body>
+      l.replace(host + "/?" + search + l.hash);
+    </script>
+  </head>
+  <body></body>
 </html>

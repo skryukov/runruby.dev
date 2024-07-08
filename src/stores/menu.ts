@@ -2,10 +2,9 @@ import { action, map } from "nanostores";
 
 type OutputStoreValue = {
   isOpen: boolean;
-
-}
+};
 export const $menu = map<OutputStoreValue>({
-  isOpen: false
+  isOpen: false,
 });
 
 export const toggleMenu = action($menu, "isOpen", (store) => {

@@ -14,7 +14,7 @@ import {
   currentFilePathStore,
   currentFileStore,
   refreshTreeData,
-  setCode
+  setCode,
 } from "../../stores/editor.ts";
 import { useEditorTheme } from "../../useEditorTheme.ts";
 import { getQueryParam } from "../../fsInitializer.ts";
@@ -24,11 +24,8 @@ import cs from "./Editor.module.css";
 type EditorProps = {
   loading: boolean;
   runVM: (RunVMParams: RunVMParams) => void;
-}
-export const Editor = ({
-                         loading: VMRunning,
-                         runVM
-                       }: EditorProps) => {
+};
+export const Editor = ({ loading: VMRunning, runVM }: EditorProps) => {
   const [editorInitializing, setInitializing] = useState(true);
   const bundleInstalled = useRef(false);
 
@@ -38,22 +35,28 @@ export const Editor = ({
   const currentFilePath = useStore(currentFilePathStore);
   const currentFile = useStore(currentFileStore);
 
-  const canRunBundleInstall = useMemo(() => (
-    !loading && treeData.find((entry) => entry.name === "Gemfile")
-  ), [loading, treeData]);
+  const canRunBundleInstall = useMemo(
+    () => !loading && treeData.find((entry) => entry.name === "Gemfile"),
+    [loading, treeData],
+  );
 
-  const canRunCode = useMemo(() => (
-    !loading && currentFilePath?.endsWith(".rb")
-  ), [currentFilePath, loading]);
+  const canRunCode = useMemo(
+    () => !loading && currentFilePath?.endsWith(".rb"),
+    [currentFilePath, loading],
+  );
 
   const runCode = useCallback(() => {
     if (!currentFilePath?.endsWith(".rb")) return;
 
     runVM({
       code: `
-      ${canRunBundleInstall ? `require "rubygems_stub"
+      ${
+        canRunBundleInstall
+          ? `require "rubygems_stub"
         require "bundler_stub"
-        require "bundler/setup"` : ""}
+        require "bundler/setup"`
+          : ""
+      }
       eval(<<~'CODE', binding, '${currentFilePath}', 1)
        ${code}
       CODE
@@ -63,15 +66,16 @@ export const Editor = ({
       },
       onSuccess: () => {
         openTab("logs");
-      }, onError: () => {
+      },
+      onError: () => {
         openTab("logs");
-      }
+      },
     });
   }, [canRunBundleInstall, code, currentFilePath, runVM]);
 
   const bundleInstall = useCallback(() => {
     runVM({
-        code: `require "rubygems_stub"
+      code: `require "rubygems_stub"
     require "thread_stub"
     require "bundler_stub"
     require "bundler/cli"
@@ -82,28 +86,28 @@ export const Editor = ({
       $stderr << e.message << "\\n" << e.backtrace.join("\\n")
     end
     `,
-        onBefore: () => {
-          openTab("logs");
-        },
-        onSuccess: () => {
-          openTab("logs");
-          db.fsCache.clear().then(async () => {
-            await db.fsCache.add({
-              key: "gemsDir",
-              data: gemsDir.dir.contents as never
-            });
-            await db.fsCache.add({
-              key: "bundleDir",
-              data: bundleDir.dir.contents as never
-            });
-            refreshCacheInfo();
+      onBefore: () => {
+        openTab("logs");
+      },
+      onSuccess: () => {
+        openTab("logs");
+        db.fsCache.clear().then(async () => {
+          await db.fsCache.add({
+            key: "gemsDir",
+            data: gemsDir.dir.contents as never,
           });
-        }, onError: () => {
-          openTab("logs");
-        },
-        onFinally: refreshTreeData
-      }
-    );
+          await db.fsCache.add({
+            key: "bundleDir",
+            data: bundleDir.dir.contents as never,
+          });
+          refreshCacheInfo();
+        });
+      },
+      onError: () => {
+        openTab("logs");
+      },
+      onFinally: refreshTreeData,
+    });
   }, [runVM]);
 
   const activateFirstFile = useCallback(() => {
@@ -123,16 +127,25 @@ export const Editor = ({
     if (editorInitializing && treeData) {
       activateFirstFile();
     } else if (!bundleInstalled.current) {
-      ((getQueryParam("gem") || getQueryParam("gist")) && !getQueryParam("embed")) && canRunBundleInstall && bundleInstall();
+      (getQueryParam("gem") || getQueryParam("gist")) &&
+        !getQueryParam("embed") &&
+        canRunBundleInstall &&
+        bundleInstall();
       bundleInstalled.current = true;
     }
-  }, [treeData, activateFirstFile, bundleInstall, canRunBundleInstall, editorInitializing]);
+  }, [
+    treeData,
+    activateFirstFile,
+    bundleInstall,
+    canRunBundleInstall,
+    editorInitializing,
+  ]);
 
   const handleEditorChange = (value: string | undefined) => {
     setCode(value || "");
 
     if (currentFilePath) {
-      writeFile(currentFilePath, value || "")
+      writeFile(currentFilePath, value || "");
     }
   };
 
@@ -141,56 +154,58 @@ export const Editor = ({
   return (
     <div className={cs.editorContainer}>
       <div className={cs.editorHeader}>
-        {currentFilePath && <label className={cs.editorLabel}>{currentFilePath}</label>}
+        {currentFilePath && (
+          <label className={cs.editorLabel}>{currentFilePath}</label>
+        )}
       </div>
       <div className={cs.editorText}>
-        {
-          currentFilePath && currentFile ? (
-            <MonacoEditor
-              height="100%"
-              width="100%"
-              theme={theme}
-              defaultLanguage="ruby"
-              path={currentFilePath}
-              defaultValue={decode(currentFile.data)}
-              onChange={handleEditorChange}
-              onMount={() => {
-                setInitializing(false);
-              }}
-              options={{
-                fontFamily: "Martian Mono, monospace",
-                automaticLayout: true,
-                wordWrap: "on",
+        {currentFilePath && currentFile ? (
+          <MonacoEditor
+            height="100%"
+            width="100%"
+            theme={theme}
+            defaultLanguage="ruby"
+            path={currentFilePath}
+            defaultValue={decode(currentFile.data)}
+            onChange={handleEditorChange}
+            onMount={() => {
+              setInitializing(false);
+            }}
+            options={{
+              fontFamily: "Martian Mono, monospace",
+              automaticLayout: true,
+              wordWrap: "on",
 
-                glyphMargin: false,
-                lineDecorationsWidth: 0,
-                lineNumbersMinChars: 3,
-                minimap: { enabled: false },
-                overviewRulerBorder: false,
-                hideCursorInOverviewRuler: true
-              }}
-            />
-
-          ) : (
-            !editorInitializing && (
-              <div className={cs.editorPlaceholder}>
-                Select a file to edit
-              </div>
-            )
+              glyphMargin: false,
+              lineDecorationsWidth: 0,
+              lineNumbersMinChars: 3,
+              minimap: { enabled: false },
+              overviewRulerBorder: false,
+              hideCursorInOverviewRuler: true,
+            }}
+          />
+        ) : (
+          !editorInitializing && (
+            <div className={cs.editorPlaceholder}>Select a file to edit</div>
           )
-        }
+        )}
       </div>
       <div className={cs.editorFooter}>
         <div className={cs.editorLoading}>
           {loading && <VscLoading size={20} />}
         </div>
-        <button className={`${cs.installButton} ${canRunBundleInstall ? "" : cs.buttonDisabled}`}
-                disabled={!canRunBundleInstall}
-                onClick={() => !loading && bundleInstall()}>
+        <button
+          className={`${cs.installButton} ${canRunBundleInstall ? "" : cs.buttonDisabled}`}
+          disabled={!canRunBundleInstall}
+          onClick={() => !loading && bundleInstall()}
+        >
           Bundle install
         </button>
-        <button className={`${cs.runButton} ${canRunCode ? "" : cs.buttonDisabled}`} disabled={!canRunCode}
-                onClick={() => !loading && runCode()}>
+        <button
+          className={`${cs.runButton} ${canRunCode ? "" : cs.buttonDisabled}`}
+          disabled={!canRunCode}
+          onClick={() => !loading && runCode()}
+        >
           Run code
         </button>
       </div>

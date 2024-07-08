@@ -11,7 +11,4 @@ export default async (request: IRequest) => {
 
   const newRequest = new Request(request, { cf: { cacheEverything: true } });
   return await fetch(proxyUrl, newRequest);
-}
-
-
-
+};
