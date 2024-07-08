@@ -7,7 +7,7 @@ export const downloadZip = () => {
 
   walkFileTree(({ filename, contents }) => {
     zip.file(filename, contents);
-  })
+  });
 
   zip.generateAsync({ type: "blob" }).then((blob) => {
     saveAs(blob, "runruby.zip");

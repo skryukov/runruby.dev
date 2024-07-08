@@ -15,19 +15,23 @@ export const Content = () => {
   const { loading, log, result, runVM } = useVM();
 
   const gemsDirContent = useLiveQuery(
-    () => db.fsCache.get({key: "gemsDir"}),
-    []
+    () => db.fsCache.get({ key: "gemsDir" }),
+    [],
   );
   const bundleDirContent = useLiveQuery(
-    () => db.fsCache.get({key: "bundleDir"}),
-    []
+    () => db.fsCache.get({ key: "bundleDir" }),
+    [],
   );
 
   const populatedGemsDir = useRef(false);
   useEffect(() => {
     if (gemsDirContent && bundleDirContent && !populatedGemsDir.current) {
-      gemsDir.dir.contents = mapToEntities(gemsDirContent.data as DirectoryContents);
-      bundleDir.dir.contents = mapToEntities(bundleDirContent.data as DirectoryContents);
+      gemsDir.dir.contents = mapToEntities(
+        gemsDirContent.data as DirectoryContents,
+      );
+      bundleDir.dir.contents = mapToEntities(
+        bundleDirContent.data as DirectoryContents,
+      );
       populatedGemsDir.current = true;
     }
   }, [gemsDirContent, bundleDirContent, populatedGemsDir]);
@@ -36,23 +40,18 @@ export const Content = () => {
 
   return (
     <div className={cs.content}>
-      {menuIsOpen ? (<div className={cs.menuShadow} onClick={toggleMenu}></div>) : null}
-      <div className={`${cs.menu} ${menuIsOpen ? cs.menuOpen : ''}`}>
+      {menuIsOpen ? (
+        <div className={cs.menuShadow} onClick={toggleMenu}></div>
+      ) : null}
+      <div className={`${cs.menu} ${menuIsOpen ? cs.menuOpen : ""}`}>
         <Menu />
       </div>
       <div className={cs.editor}>
-        <Editor
-          loading={loading}
-          runVM={runVM}
-        />
+        <Editor loading={loading} runVM={runVM} />
       </div>
       <div className={cs.output}>
-        <Output
-          log={log}
-          result={result}
-        />
+        <Output log={log} result={result} />
       </div>
     </div>
   );
 };
-

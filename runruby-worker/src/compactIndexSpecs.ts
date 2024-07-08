@@ -14,7 +14,7 @@ type GemInfo = {
 const REQUESTS_LIMIT = 50;
 
 const checkVersion = (options: GemDependency[], key: string, version: string): boolean => {
-  const option = options.find(e => e[0] === key);
+  const option = options.find((e) => e[0] === key);
   if (option) {
     for (const ver of option[1]) {
       const match = ver.match(/([~<])\s*(\d+)\./);
@@ -45,7 +45,7 @@ export default async (request: IRequest) => {
   let remainingGems = gemNames.slice(0, REQUESTS_LIMIT - subrequests);
   const gemsOverflow = remainingGems.slice(REQUESTS_LIMIT - subrequests);
 
-  while (remainingGems.length > 0 && (subrequests + remainingGems.length) <= REQUESTS_LIMIT) {
+  while (remainingGems.length > 0 && subrequests + remainingGems.length <= REQUESTS_LIMIT) {
     const depFetches = remainingGems.map(async (gem) => {
       const response = await fetch(`https://index.rubygems.org/info/${gem}`, { cf: { cacheEverything: true } });
       subrequests++;
@@ -57,7 +57,7 @@ export default async (request: IRequest) => {
       const lines = (await response.text()).split("\n").slice((maxDepth + 1) * -1, -1);
       const gemInfo: GemInfo[] = [];
 
-      lines.forEach(line => {
+      lines.forEach((line) => {
         const parts = line.split("|");
         if (parts.length < 2) return;
 
@@ -71,12 +71,23 @@ export default async (request: IRequest) => {
         // ignore platform specific gems
         if (platform) return null;
 
-        const dependencies: GemDependency[] = parts[0].split(" ")[1] ? parts[0].split(" ").slice(1).join(" ").split(",").map(e => e.split(":")).map(e => ([e[0], e[1].split("&")])) : [];
+        const dependencies: GemDependency[] = parts[0].split(" ")[1]
+          ? parts[0]
+              .split(" ")
+              .slice(1)
+              .join(" ")
+              .split(",")
+              .map((e) => e.split(":"))
+              .map((e) => [e[0], e[1].split("&")])
+          : [];
 
         // ignore bundler < 2
         if (checkVersion(dependencies, "bundler", "2")) return null;
 
-        const options: GemDependency[] = parts[1].split(",").map(e => e.split(":")).map(e => ([e[0], e[1].split("&")]));
+        const options: GemDependency[] = parts[1]
+          .split(",")
+          .map((e) => e.split(":"))
+          .map((e) => [e[0], e[1].split("&")]);
 
         // ignore ruby < 3 and rubygems < 3
         if (checkVersion(options, "ruby", "3")) return null;
@@ -87,22 +98,22 @@ export default async (request: IRequest) => {
 
       return gemInfo;
     });
-    const gemsDeps = (await Promise.all(depFetches)).filter(e => e !== null) as GemInfo[][];
+    const gemsDeps = (await Promise.all(depFetches)).filter((e) => e !== null) as GemInfo[][];
 
-    const nextGems = [...new Set(gemsDeps.map(dep => dep.map(d => d.dependencies.map(e => e[0])).flat()).flat())];
+    const nextGems = [...new Set(gemsDeps.map((dep) => dep.map((d) => d.dependencies.map((e) => e[0])).flat()).flat())];
 
-    gemsDeps.forEach(dep => gemInfo.push(...dep));
+    gemsDeps.forEach((dep) => gemInfo.push(...dep));
 
-    completeGems.push(...new Set(gemsDeps.map(dep => dep.map(d => d.gem)).flat()));
+    completeGems.push(...new Set(gemsDeps.map((dep) => dep.map((d) => d.gem)).flat()));
 
     completeGems = [...new Set(completeGems)];
 
-    remainingGems = nextGems.filter(gem => !completeGems.includes(gem));
+    remainingGems = nextGems.filter((gem) => !completeGems.includes(gem));
   }
 
   return {
     specs: gemInfo.map(Object.values),
     completeGems,
-    remainingGems: gemsOverflow.concat(remainingGems).filter(gem => !completeGems.includes(gem))
+    remainingGems: gemsOverflow.concat(remainingGems).filter((gem) => !completeGems.includes(gem)),
   };
 };

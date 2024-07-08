@@ -24,7 +24,10 @@ export const walkFileTree = (cb: ({ filename, contents }: FSFile) => void) => {
       if (file instanceof Directory) {
         walk(file, `${path}/${name}`);
       } else {
-        cb({ filename: `${path ? path + '/' : ''}${name}`, contents: decode((file as File).data) });
+        cb({
+          filename: `${path ? path + "/" : ""}${name}`,
+          contents: decode((file as File).data),
+        });
       }
     });
   };
@@ -62,7 +65,7 @@ export const rename = (oldPath: string, newPath: string) => {
   } else {
     console.error(`${oldName} not found in oldDir.contents`);
 
-    return false
+    return false;
   }
 
   if (newDir.contents.get(newName) instanceof File) {
@@ -127,7 +130,7 @@ const findDir = (parts: string[]) => {
     if (!part) return dir;
 
     if (!dir.contents.get(part)) {
-      dir.contents.set(part,  new Directory([]));
+      dir.contents.set(part, new Directory([]));
     }
     return dir.contents.get(part) as Directory;
   }, workDir.dir);

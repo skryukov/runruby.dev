@@ -12,7 +12,7 @@ export class MySubClassedDexie extends Dexie {
   constructor() {
     super("runRubyFSCache");
     this.version(1).stores({
-      fsCache: "key, data"
+      fsCache: "key, data",
     });
   }
 }

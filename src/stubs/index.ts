@@ -1,15 +1,20 @@
-import {Directory, File, Inode, PreopenDirectory} from "@bjorn3/browser_wasi_shim";
+import {
+  Directory,
+  File,
+  Inode,
+  PreopenDirectory,
+} from "@bjorn3/browser_wasi_shim";
 
 const rubyStubs = import.meta.glob("./**/*.rb", { as: "raw", eager: true });
 
 const getDirectory = (paths: string[], rootDir: PreopenDirectory) => {
   return paths.reduce((acc, pathPart) => {
     if (acc.contents.get(pathPart) === undefined) {
-      acc.contents.set(pathPart, new Directory([]))
+      acc.contents.set(pathPart, new Directory([]));
     }
     return acc.contents.get(pathPart) as Directory;
   }, rootDir.dir);
-}
+};
 
 export const generateRubyStubsDir = (path: string) => {
   const emptyMap = new Map<string, Inode>();
@@ -22,4 +27,4 @@ export const generateRubyStubsDir = (path: string) => {
     directory.contents.set(filename, new File(encoder.encode(fileText)));
   }
   return rootDir;
-}
+};

@@ -10,10 +10,7 @@ import { SettingsTab } from "./SettingsTab.tsx";
 import { InfoTab } from "./InfoTab.tsx";
 import cs from "./Output.module.css";
 
-export const Output = ({ result, log }: {
-  result: string,
-  log: string[],
-}) => {
+export const Output = ({ result, log }: { result: string; log: string[] }) => {
   const outputStore = useStore($output);
   const { activeTab } = outputStore;
 
@@ -31,53 +28,57 @@ export const Output = ({ result, log }: {
   return (
     <>
       <div className={cs.switchButtons}>
-        <button className={`${cs.switchButton} ${activeTab === "logs" ? cs.switchButtonActive : ""}`}
-                onClick={() => openTab("logs")}>
+        <button
+          className={`${cs.switchButton} ${activeTab === "logs" ? cs.switchButtonActive : ""}`}
+          onClick={() => openTab("logs")}
+        >
           Logs
         </button>
-        <button className={`${cs.switchButton} ${activeTab === "info" ? cs.switchButtonActive : ""}`}
-                onClick={() => openTab("info")}>
+        <button
+          className={`${cs.switchButton} ${activeTab === "info" ? cs.switchButtonActive : ""}`}
+          onClick={() => openTab("info")}
+        >
           About
         </button>
-        <button className={`${cs.switchButton} ${activeTab === "settings" ? cs.switchButtonActive : ""}`}
-                onClick={() => openTab("settings")}>
+        <button
+          className={`${cs.switchButton} ${activeTab === "settings" ? cs.switchButtonActive : ""}`}
+          onClick={() => openTab("settings")}
+        >
           Settings
         </button>
       </div>
       <div className={cs.editorText}>
-        {
-          (activeTab === "logs") ? (
-            <MonacoEditor
-              height="100%"
-              width="100%"
-              theme={theme}
-              value={value}
-              language="shell"
-              options={{
-                readOnly: true,
+        {activeTab === "logs" ? (
+          <MonacoEditor
+            height="100%"
+            width="100%"
+            theme={theme}
+            value={value}
+            language="shell"
+            options={{
+              readOnly: true,
 
-                fontFamily: "Martian Mono, monospace",
-                automaticLayout: true,
-                wordWrap: "on",
+              fontFamily: "Martian Mono, monospace",
+              automaticLayout: true,
+              wordWrap: "on",
 
-                lineNumbers: "off",
-                glyphMargin: false,
-                folding: false,
-                lineDecorationsWidth: 0,
-                lineNumbersMinChars: 0,
-                minimap: { enabled: false },
-                overviewRulerBorder: false,
-                renderLineHighlight: "none",
-                hideCursorInOverviewRuler: true
-              }} />
-          ) : (activeTab === "info") ? (
-            <InfoTab />
-          ) : (
-            <SettingsTab />
-          )
-        }
+              lineNumbers: "off",
+              glyphMargin: false,
+              folding: false,
+              lineDecorationsWidth: 0,
+              lineNumbersMinChars: 0,
+              minimap: { enabled: false },
+              overviewRulerBorder: false,
+              renderLineHighlight: "none",
+              hideCursorInOverviewRuler: true,
+            }}
+          />
+        ) : activeTab === "info" ? (
+          <InfoTab />
+        ) : (
+          <SettingsTab />
+        )}
       </div>
     </>
-  )
-    ;
+  );
 };

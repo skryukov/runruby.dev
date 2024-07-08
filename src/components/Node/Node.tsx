@@ -1,5 +1,11 @@
 import { NodeRendererProps, NodeApi } from "react-arborist";
-import { VscEdit, VscFile, VscFolder, VscFolderOpened, VscTrash } from "react-icons/vsc";
+import {
+  VscEdit,
+  VscFile,
+  VscFolder,
+  VscFolderOpened,
+  VscTrash,
+} from "react-icons/vsc";
 
 import { Entity } from "../../fsMap.ts";
 import cs from "./Node.module.css";
@@ -10,7 +16,7 @@ function isValidFileName(fileName: string) {
   if (fileName.trim() === "") {
     return false;
   }
-  const invalidCharacters = ["<", ">", ":", "\"", "/", "\\", "|", "?", "*"];
+  const invalidCharacters = ["<", ">", ":", '"', "/", "\\", "|", "?", "*"];
   for (let i = 0; i < invalidCharacters.length; i++) {
     if (fileName.includes(invalidCharacters[i])) {
       return false;
@@ -25,7 +31,12 @@ function submitNodeName(node: NodeApi<Entity>, value: string) {
   }
 }
 
-export const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity>) => {
+export const Node = ({
+  node,
+  style,
+  dragHandle,
+  tree,
+}: NodeRendererProps<Entity>) => {
   const { dirtyFiles } = useStore($editor);
   return (
     <div
@@ -38,24 +49,27 @@ export const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity
         onClick={() => node.isInternal && node.toggle()}
       >
         <span className={cs.fileFolderIcon}>
-        {node.isLeaf ? (
-          <VscFile />
-        ) : (
-          node.isOpen ? (
+          {node.isLeaf ? (
+            <VscFile />
+          ) : node.isOpen ? (
             <VscFolderOpened />
           ) : (
             <VscFolder />
-          )
-        )}
-          </span>
-        <span className={`${cs.nodeText} ${dirtyFiles.includes(node.data.fullPath) ? cs.dirtyFile : ""}`}>
+          )}
+        </span>
+        <span
+          className={`${cs.nodeText} ${dirtyFiles.includes(node.data.fullPath) ? cs.dirtyFile : ""}`}
+        >
           {node.isEditing ? (
             <input
               type="text"
               defaultValue={node.data.name}
               onFocus={(e) => {
                 if (node.isLeaf) {
-                  e.currentTarget.setSelectionRange(0, node.data.name.lastIndexOf("."));
+                  e.currentTarget.setSelectionRange(
+                    0,
+                    node.data.name.lastIndexOf("."),
+                  );
                 } else {
                   e.currentTarget.select();
                 }
@@ -63,7 +77,8 @@ export const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity
               onBlur={(e) => submitNodeName(node, e.currentTarget.value)}
               onKeyDown={(e) => {
                 if (e.key === "Escape") node.reset();
-                if (e.key === "Enter") submitNodeName(node, e.currentTarget.value);
+                if (e.key === "Enter")
+                  submitNodeName(node, e.currentTarget.value);
               }}
               autoFocus
             />
@@ -78,12 +93,19 @@ export const Node = ({ node, style, dragHandle, tree }: NodeRendererProps<Entity
           <button onClick={() => node.edit()} title="Rename...">
             <VscEdit />
           </button>
-          <button onClick={(e) => {
-            if (window.confirm(`Are you sure you want to delete this ${node.isLeaf ? "file" : "folder"}?`)) {
-              tree.delete(node.id);
-            }
-            e.stopPropagation();
-          }} title="Delete...">
+          <button
+            onClick={(e) => {
+              if (
+                window.confirm(
+                  `Are you sure you want to delete this ${node.isLeaf ? "file" : "folder"}?`,
+                )
+              ) {
+                tree.delete(node.id);
+              }
+              e.stopPropagation();
+            }}
+            title="Delete..."
+          >
             <VscTrash />
           </button>
         </div>

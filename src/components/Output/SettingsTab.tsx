@@ -14,7 +14,6 @@ function findDirectory(dir: DirectoryContents, s: string) {
   const parts = s.split("/");
   let current = dir;
   for (const part of parts) {
-
     if (!(current[part] && "contents" in current[part])) {
       return undefined;
     }
@@ -23,13 +22,17 @@ function findDirectory(dir: DirectoryContents, s: string) {
   return current;
 }
 
-const combinedGems = (gems: [string, string][]) => gems.reduce((acc, [name, version]) => {
-  if (acc[name] === undefined) {
-    acc[name] = [];
-  }
-  acc[name].push(version);
-  return acc;
-}, {} as Record<string, string[]>);
+const combinedGems = (gems: [string, string][]) =>
+  gems.reduce(
+    (acc, [name, version]) => {
+      if (acc[name] === undefined) {
+        acc[name] = [];
+      }
+      acc[name].push(version);
+      return acc;
+    },
+    {} as Record<string, string[]>,
+  );
 
 export const SettingsTab = () => {
   const cache = useStore($cache);
@@ -37,26 +40,36 @@ export const SettingsTab = () => {
 
   const gemsDirContent = useLiveQuery(
     () => db.fsCache.get({ key: "gemsDir" }),
-    []
+    [],
   );
 
-  const installedGemsDir = useMemo(() => (
-    typeof gemsDirContent === "object" && ("data" in gemsDirContent) && findDirectory(gemsDirContent.data, "ruby/3.3.0/gems")
-  ), [gemsDirContent]);
+  const installedGemsDir = useMemo(
+    () =>
+      typeof gemsDirContent === "object" &&
+      "data" in gemsDirContent &&
+      findDirectory(gemsDirContent.data, "ruby/3.3.0/gems"),
+    [gemsDirContent],
+  );
 
+  const gems = Object.keys(installedGemsDir || {})
+    .map((gem) => {
+      const parts = gem.split("-");
+      const version = parts.pop();
+      const name = parts.join("-");
+      return [name, version] as [string, string];
+    })
+    .sort();
 
-  const gems = Object.keys(installedGemsDir || {}).map((gem) => {
-    const parts = gem.split("-");
-    const version = parts.pop();
-    const name = parts.join("-");
-    return [name, version] as [string, string];
-  }).sort();
+  const combinedGemsArray = Object.entries(combinedGems(gems)).map(
+    ([name, versions]) => {
+      return [name, versions.join(", ")] as [string, string];
+    },
+  );
 
-  const combinedGemsArray = Object.entries(combinedGems(gems)).map(([name, versions]) => {
-    return [name, versions.join(", ")] as [string, string];
-  });
-
-  const canRunCacheClear = useLiveQuery(async () => (await db.fsCache.count()) > 0, []);
+  const canRunCacheClear = useLiveQuery(
+    async () => (await db.fsCache.count()) > 0,
+    [],
+  );
 
   return (
     <div className={cs.cacheInfo}>
@@ -73,16 +86,16 @@ export const SettingsTab = () => {
         </select>
       </span>
 
-      <span className={cs.cacheInfoLabel}>
-        Cached Gems
-      </span>
+      <span className={cs.cacheInfoLabel}>Cached Gems</span>
       <div className={cs.listOfGems}>
         {gems.length === 0 ? (
           <p>No gems cached</p>
         ) : (
           <ul>
             {combinedGemsArray.map((gem) => (
-              <li key={gem[0] + gem[1]}>{gem[0]} ({gem[1]})</li>
+              <li key={gem[0] + gem[1]}>
+                {gem[0]} ({gem[1]})
+              </li>
             ))}
           </ul>
         )}
@@ -90,8 +103,11 @@ export const SettingsTab = () => {
 
       <span className={cs.cacheInfoLabel}>
         Gems Cache Size
-        <button className={`${cs.clearCacheButton} ${canRunCacheClear ? "" : cs.buttonDisabled}`}
-                onClick={clearCache}>Clear Cache
+        <button
+          className={`${cs.clearCacheButton} ${canRunCacheClear ? "" : cs.buttonDisabled}`}
+          onClick={clearCache}
+        >
+          Clear Cache
         </button>
       </span>
       <div className={cs.cacheInfoContent}>
@@ -100,12 +116,14 @@ export const SettingsTab = () => {
         ) : (
           <>
             <div>
-              Estimated usage:{" "}
-              {formatBytes(cache.info?.usage || 0)}/{formatBytes(cache.info?.quota || 0)}
+              Estimated usage: {formatBytes(cache.info?.usage || 0)}/
+              {formatBytes(cache.info?.quota || 0)}
               <div className={cs.tooltip}>
                 <VscInfo />
                 <span className={cs.tooltiptext}>
-                  Storage space might not be immediately reclaimed after deleting data due to the browser's internal garbage collection processes.
+                  Storage space might not be immediately reclaimed after
+                  deleting data due to the browser's internal garbage collection
+                  processes.
                 </span>
               </div>
             </div>

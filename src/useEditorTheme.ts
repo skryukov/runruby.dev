@@ -6,7 +6,7 @@ import { $theme } from "./stores/theme.ts";
 export const useEditorTheme = () => {
   const theme = useStore($theme);
   const systemDarkTheme = useMediaQuery({
-    query: "(prefers-color-scheme: dark)"
+    query: "(prefers-color-scheme: dark)",
   });
   const darkTheme = theme === "dark" || (theme === "system" && systemDarkTheme);
 

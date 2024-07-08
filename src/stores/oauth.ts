@@ -5,9 +5,9 @@ type OAuthStoreValue = {
   state?: string;
   code?: string;
   error?: string;
-}
+};
 export const $oauth = map<OAuthStoreValue>({
-  state: nanoid()
+  state: nanoid(),
 });
 
 onSet($oauth, ({ changed, newValue }) => {
@@ -15,34 +15,42 @@ onSet($oauth, ({ changed, newValue }) => {
     fetch(
       `${import.meta.env.VITE_WORKER_URL}/api/auth/github?code=${newValue.code}`,
       {
-        credentials: "include"
-      }).then(fetchUser)
+        credentials: "include",
+      },
+    )
+      .then(fetchUser)
       .catch((error) => {
         $oauth.setKey("error", error.message);
       });
   }
 });
 
-type CurrentUserStoreValue = {
-  id: undefined;
-} |
-  {
-    id: string;
-    username: string;
-    avatarUrl: string;
-  }
+type CurrentUserStoreValue =
+  | {
+      id: undefined;
+    }
+  | {
+      id: string;
+      username: string;
+      avatarUrl: string;
+    };
 
 export const $currentUser = map<CurrentUserStoreValue>({
-  id: undefined
+  id: undefined,
 });
 
 const fetchUser = () => {
   fetch(`${import.meta.env.VITE_WORKER_URL}/api/user`, {
-    credentials: "include"
-  }).then((res) => res.json()).then((data) => {
-      $currentUser.set({ username: data.login, avatarUrl: data.avatar_url, id: data.id });
-    }
-  );
+    credentials: "include",
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      $currentUser.set({
+        username: data.login,
+        avatarUrl: data.avatar_url,
+        id: data.id,
+      });
+    });
 };
 
 onMount($currentUser, () => {
@@ -51,7 +59,7 @@ onMount($currentUser, () => {
 
 export const signOut = () => {
   fetch(`${import.meta.env.VITE_WORKER_URL}/api/auth/sign_out`, {
-    credentials: "include"
+    credentials: "include",
   }).then(() => {
     $currentUser.set({ id: undefined });
   });

@@ -1,6 +1,14 @@
 import { RubyVM } from "@ruby/wasm-wasi";
 import wasmUrl from "@ruby/3.3-wasm-wasi/dist/ruby+stdlib.wasm?url";
-import {Fd, PreopenDirectory, File, WASI, OpenFile, ConsoleStdout, Inode} from "@bjorn3/browser_wasi_shim";
+import {
+  Fd,
+  PreopenDirectory,
+  File,
+  WASI,
+  OpenFile,
+  ConsoleStdout,
+  Inode,
+} from "@bjorn3/browser_wasi_shim";
 
 import { wasiImports } from "./wasiImports";
 import { TRunParams, TSetString } from "../types";
@@ -8,7 +16,9 @@ import { generateRubyStubsDir } from "../../stubs";
 import { writeFiles } from "./editorFS.ts";
 import { composeInitialFS } from "../../fsInitializer.ts";
 
-const wasmModulePromise = fetch(wasmUrl).then((response) => WebAssembly.compileStreaming(response));
+const wasmModulePromise = fetch(wasmUrl).then((response) =>
+  WebAssembly.compileStreaming(response),
+);
 
 const rubyStubsPath = "/usr/local/lib/ruby_gems";
 const emptyMap = new Map<string, Inode>();
@@ -27,11 +37,7 @@ export const initializeFS = async () => {
   writeFiles(fs);
 };
 
-const dirFds = [
-  generateRubyStubsDir(rubyStubsPath),
-  bundleDir,
-  gemsDir
-];
+const dirFds = [generateRubyStubsDir(rubyStubsPath), bundleDir, gemsDir];
 
 async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   const fds: Fd[] = [
@@ -39,7 +45,7 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
     ConsoleStdout.lineBuffered(setStdout),
     ConsoleStdout.lineBuffered(setStderr),
     workDir,
-    ...dirFds
+    ...dirFds,
   ];
   const wasi = new WASI([], [], fds, { debug: false });
 
@@ -49,11 +55,20 @@ async function createRuby(setStdout: TSetString, setStderr: TSetString) {
   const imports = wasiImports(wasi, { debug: false });
   ruby.addToImports(imports);
 
-  const instance = await WebAssembly.instantiate(await wasmModulePromise, imports);
+  const instance = await WebAssembly.instantiate(
+    await wasmModulePromise,
+    imports,
+  );
   await ruby.setInstance(instance);
 
   wasi.initialize(instance as never);
-  ruby.initialize(["ruby.wasm", "-e_=0", "-EUTF-8", `-I${rubyStubsPath}`, `-rdefault_stubs`]);
+  ruby.initialize([
+    "ruby.wasm",
+    "-e_=0",
+    "-EUTF-8",
+    `-I${rubyStubsPath}`,
+    `-rdefault_stubs`,
+  ]);
 
   return ruby;
 }
