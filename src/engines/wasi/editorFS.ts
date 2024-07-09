@@ -20,7 +20,7 @@ export interface FSFile {
 
 export const walkFileTree = (cb: ({ filename, contents }: FSFile) => void) => {
   const walk = (dir: Directory, path: string) => {
-    Object.entries(dir.contents).forEach(([name, file]) => {
+    for (const [name, file] of dir.contents.entries()) {
       if (file instanceof Directory) {
         walk(file, `${path}/${name}`);
       } else {
@@ -29,7 +29,7 @@ export const walkFileTree = (cb: ({ filename, contents }: FSFile) => void) => {
           contents: decode((file as File).data),
         });
       }
-    });
+    };
   };
 
   walk(workDir.dir, "");
