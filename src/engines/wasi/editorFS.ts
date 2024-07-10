@@ -29,7 +29,7 @@ export const walkFileTree = (cb: ({ filename, contents }: FSFile) => void) => {
           contents: decode((file as File).data),
         });
       }
-    };
+    }
   };
 
   walk(workDir.dir, "");
