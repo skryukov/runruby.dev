@@ -32,5 +32,4 @@ end
 `);
 };
 
-bundler()
-  .then(() => process.exit(0));
+bundler().then(() => process.exit(0));
