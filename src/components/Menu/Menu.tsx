@@ -7,7 +7,6 @@ import {
   Tree,
   TreeApi,
 } from "react-arborist";
-import { Directory } from "@bjorn3/browser_wasi_shim";
 import { nanoid } from "nanoid";
 import {
   VscFileZip,
