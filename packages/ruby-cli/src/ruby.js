@@ -10,7 +10,7 @@ const main = async () => {
   let preset = `ARGV = ${JSON.stringify(args)};`;
   Object.entries(process.env).forEach(([k, v]) => {
     preset += `ENV["${k}"] = "${v}";`;
-  })
+  });
   ruby.eval(preset);
 
   args.forEach((arg, i) => {
@@ -41,5 +41,4 @@ const main = async () => {
   }
 };
 
-main()
-  .then(() => process.exit(0));
+main().then(() => process.exit(0));

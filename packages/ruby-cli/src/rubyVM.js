@@ -10,6 +10,7 @@ const rootFolder = "/home/runruby";
 
 export const initializeRuby = async (args = []) => {
   const wasmModule = await WebAssembly.compile(
+    // eslint-disable-next-line no-undef
     readFileSync(path.resolve(__dirname, wasmFilePath)),
   );
 

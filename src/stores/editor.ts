@@ -32,14 +32,18 @@ export const getDirFiles = async (path: string) => {
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 
-  const files = await webcontainerInstance?.fs?.readdir(path, { withFileTypes: true });
+  const files = await webcontainerInstance?.fs?.readdir(path, {
+    withFileTypes: true,
+  });
   const result: Entity[] = [];
   for (const file of files) {
     result.push({
       id: file.name,
       name: file.name,
       fullPath: `${path}/${file.name}`,
-      children: file.isDirectory() ? await getDirFiles(`${path}/${file.name}`) : undefined
+      children: file.isDirectory()
+        ? await getDirFiles(`${path}/${file.name}`)
+        : undefined,
     });
   }
   return result;

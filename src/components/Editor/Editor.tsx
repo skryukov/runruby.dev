@@ -6,7 +6,7 @@ import { decode } from "../../engines/wasi/editorFS.ts";
 import {
   currentFilePathStore,
   currentFileStore,
-  setCode
+  setCode,
 } from "../../stores/editor.ts";
 import { useEditorTheme } from "../../useEditorTheme.ts";
 
@@ -54,44 +54,41 @@ export const Editor = () => {
   return (
     <div className={cs.editorContainer}>
       <div className={cs.editorHeader}>
-        {currentFilePath && <label className={cs.editorLabel}>{currentFilePath}</label>}
+        {currentFilePath && (
+          <label className={cs.editorLabel}>{currentFilePath}</label>
+        )}
       </div>
       <div className={cs.editorText}>
-        {
-          currentFilePath && currentFile ? (
-            <MonacoEditor
-              height="100%"
-              width="100%"
-              theme={theme}
-              defaultLanguage="ruby"
-              path={currentFilePath}
-              defaultValue={decode(currentFile.data)}
-              onChange={handleEditorChange}
-              onMount={() => {
-                setInitializing(false);
-              }}
-              options={{
-                fontFamily: "Martian Mono, monospace",
-                automaticLayout: true,
-                wordWrap: "on",
+        {currentFilePath && currentFile ? (
+          <MonacoEditor
+            height="100%"
+            width="100%"
+            theme={theme}
+            defaultLanguage="ruby"
+            path={currentFilePath}
+            defaultValue={decode(currentFile.data)}
+            onChange={handleEditorChange}
+            onMount={() => {
+              setInitializing(false);
+            }}
+            options={{
+              fontFamily: "Martian Mono, monospace",
+              automaticLayout: true,
+              wordWrap: "on",
 
-                glyphMargin: false,
-                lineDecorationsWidth: 0,
-                lineNumbersMinChars: 3,
-                minimap: { enabled: false },
-                overviewRulerBorder: false,
-                hideCursorInOverviewRuler: true
-              }}
-            />
-
-          ) : (
-            !editorInitializing && (
-              <div className={cs.editorPlaceholder}>
-                Select a file to edit
-              </div>
-            )
+              glyphMargin: false,
+              lineDecorationsWidth: 0,
+              lineNumbersMinChars: 3,
+              minimap: { enabled: false },
+              overviewRulerBorder: false,
+              hideCursorInOverviewRuler: true,
+            }}
+          />
+        ) : (
+          !editorInitializing && (
+            <div className={cs.editorPlaceholder}>Select a file to edit</div>
           )
-        }
+        )}
       </div>
     </div>
   );

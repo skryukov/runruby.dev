@@ -10,7 +10,7 @@ export const Terminal = () => {
   useEffect(() => {
     if (!terminalRef) return;
     const xterm = new Xterm({
-      convertEol: true
+      convertEol: true,
     });
     startShell(xterm).then(() => {
       xterm.open(terminalRef);

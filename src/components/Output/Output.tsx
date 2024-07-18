@@ -14,8 +14,10 @@ export const Output = () => {
   return (
     <>
       <div className={cs.switchButtons}>
-        <button className={`${cs.switchButton} ${activeTab === "terminal" ? cs.switchButtonActive : ""}`}
-                onClick={() => openTab("terminal")}>
+        <button
+          className={`${cs.switchButton} ${activeTab === "terminal" ? cs.switchButtonActive : ""}`}
+          onClick={() => openTab("terminal")}
+        >
           Terminal
         </button>
         <button
@@ -31,13 +33,17 @@ export const Output = () => {
           Settings
         </button>
       </div>
-      <div className={`${cs.tab} ${activeTab === 'terminal' ? cs.activeTab : ''}`}>
+      <div
+        className={`${cs.tab} ${activeTab === "terminal" ? cs.activeTab : ""}`}
+      >
         <Terminal />
       </div>
       <div className={`${cs.tab} ${activeTab === "info" ? cs.activeTab : ""}`}>
         <InfoTab />
       </div>
-      <div className={`${cs.tab} ${activeTab === 'settings' ? cs.activeTab : ''}`}>
+      <div
+        className={`${cs.tab} ${activeTab === "settings" ? cs.activeTab : ""}`}
+      >
         <SettingsTab />
       </div>
     </>

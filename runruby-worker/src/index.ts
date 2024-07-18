@@ -23,7 +23,6 @@ const { preflight, corsify } = cors({
     ];
 
     if (staticOrigins.includes(origin) || dynamicOrigins.some((regex) => regex.test(origin))) {
-      console.log("IN THE IF CHECKING")
       return origin;
     }
 

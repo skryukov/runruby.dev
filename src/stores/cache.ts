@@ -12,7 +12,10 @@ export const refreshCacheInfo = () => {
 
   if (navigator.storage && navigator.storage.estimate) {
     navigator.storage.estimate().then((estimation) => {
-      $cache.setKey("info", { usage: estimation.usage, quota: estimation.quota });
+      $cache.setKey("info", {
+        usage: estimation.usage,
+        quota: estimation.quota,
+      });
     });
   } else {
     $cache.setKey("info", { message: "StorageManager not found" });

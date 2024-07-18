@@ -46,10 +46,11 @@ export const Menu = () => {
   };
 
   const onCreate: CreateHandler<Entity> = async ({ parentNode, type }) => {
-    const name = (type === "leaf") ? `new_file_${Date.now()}.rb` : `new_dir_${Date.now()}`;
+    const name =
+      type === "leaf" ? `new_file_${Date.now()}.rb` : `new_dir_${Date.now()}`;
     const path = `${parentNode ? parentNode.data.fullPath : ""}/${name}`;
     if (type === "leaf") {
-      await webcontainerInstance?.fs?.writeFile(path, "")
+      await webcontainerInstance?.fs?.writeFile(path, "");
     } else {
       await webcontainerInstance?.fs?.mkdir(path);
     }

@@ -3,5 +3,4 @@ export type Entity = {
   name: string;
   fullPath: string;
   children?: Entity[];
-}
-
+};
