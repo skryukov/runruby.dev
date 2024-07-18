@@ -1,8 +1,9 @@
-import { action, atom, computed, map, onMount } from "nanostores";
-import { Entity, sortChildren } from "../fsMap.ts";
+import { atom, computed, map, onMount } from "nanostores";
+import { Entity } from "../fsMap.ts";
 import { TreeApi } from "react-arborist";
 import { File } from "@bjorn3/browser_wasi_shim";
-import { initializeFS, workDir } from "../engines/wasi/wasi.ts";
+import { initializeFS } from "../engines/wasi/wasi.ts";
+import { webcontainerInstance } from "../engines/webcontainers";
 
 type EditorStoreValue = {
   currentNodeId: string | null;
@@ -26,28 +27,42 @@ onMount($editor, () => {
   initializeFS().then(refreshTreeData).then(cleanDirty);
 });
 
-export const refreshTreeData = action($editor, "refreshTreeData", (store) => {
-  store.setKey("treeData", sortChildren(workDir.dir, ""));
-});
+export const getDirFiles = async (path: string) => {
+  while (!webcontainerInstance) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
 
-export const setCurrentNodeId = action(
-  $editor,
-  "setCurrentNodeId",
-  (store, id: string | null) => {
-    store.setKey("currentNodeId", id);
-  },
-);
+  const files = await webcontainerInstance?.fs?.readdir(path, {
+    withFileTypes: true,
+  });
+  const result: Entity[] = [];
+  for (const file of files) {
+    result.push({
+      id: file.name,
+      name: file.name,
+      fullPath: `${path}/${file.name}`,
+      children: file.isDirectory()
+        ? await getDirFiles(`${path}/${file.name}`)
+        : undefined,
+    });
+  }
+  return result;
+};
 
-export const setCode = action(
-  $editor,
-  "setCode",
-  (store, code: string | null) => {
-    const currentNodeId = store.get().currentNodeId;
-    if (currentNodeId === null) return;
+export const refreshTreeData = async () => {
+  $editor.setKey("treeData", await getDirFiles(""));
+};
 
-    store.setKey("code", code);
-  },
-);
+export const setCurrentNodeId = (id: string | null) => {
+  $editor.setKey("currentNodeId", id);
+};
+
+export const setCode = (code: string | null) => {
+  const currentNodeId = $editor.get().currentNodeId;
+  if (currentNodeId === null) return;
+
+  $editor.setKey("code", code);
+};
 
 export const setDirty = (path: string) => {
   const newDirtyFiles = [...new Set([...$editor.get().dirtyFiles, path])];
@@ -58,13 +73,9 @@ export const cleanDirty = () => {
   $editor.setKey("dirtyFiles", []);
 };
 
-export const setTree = action(
-  $editor,
-  "setTree",
-  (store, tree: TreeApi<Entity>) => {
-    store.setKey("tree", tree);
-  },
-);
+export const setTree = (tree: TreeApi<Entity>) => {
+  $editor.setKey("tree", tree);
+};
 
 export const currentFilePathStore = computed(
   [$editor, $editorVersion],
@@ -80,7 +91,7 @@ export const currentFileStore = computed($editor, (editor) => {
   const currentNode = editor.tree?.get(editor.currentNodeId);
   if (!currentNode) return null;
 
-  const currentFile = currentNode.data.object;
+  const currentFile = currentNode.data;
   if (currentFile instanceof File) {
     return currentFile;
   } else {

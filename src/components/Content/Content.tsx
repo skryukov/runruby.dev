@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 
-import { useVM } from "../../useVM.ts";
+//import { useVM } from "../../useVM.ts";
 import { Output } from "../Output/Output.tsx";
 import { Editor } from "../Editor/Editor.tsx";
 import { Menu } from "../Menu/Menu.tsx";
@@ -12,7 +12,7 @@ import { $menu, toggleMenu } from "../../stores/menu.ts";
 import { useStore } from "@nanostores/react";
 
 export const Content = () => {
-  const { loading, log, result, runVM } = useVM();
+  //const { loading, runVM } = useVM();
 
   const gemsDirContent = useLiveQuery(
     () => db.fsCache.get({ key: "gemsDir" }),
@@ -47,10 +47,10 @@ export const Content = () => {
         <Menu />
       </div>
       <div className={cs.editor}>
-        <Editor loading={loading} runVM={runVM} />
+        <Editor />
       </div>
       <div className={cs.output}>
-        <Output log={log} result={result} />
+        <Output />
       </div>
     </div>
   );

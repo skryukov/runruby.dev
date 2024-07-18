@@ -37,6 +37,7 @@ require "bundler/fetcher/compact_index"
 Bundler::Fetcher::CompactIndex.prepend(Module.new do
  def specs(gem_names)
    uri = "https://worker.runruby.dev/compact_index_specs?gems=#{gem_names.join(',')}"
+
    response = JSON.parse(JS::Connection.new.request(URI(uri), Gem::Net::HTTP::Get.new(URI(uri).request_uri)).body)
    if response["remainingGems"].empty?
      response["specs"]

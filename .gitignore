@@ -23,3 +23,5 @@ tmp
 *.njsproj
 *.sln
 *.sw?
+public/fs
+
