@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "@ruby/3.3-wasm-wasi": "^2.6.2",
-    "@ruby/wasm-wasi": "^2.6.2"
+    "@ruby/wasm-wasi": "^2.6.2",
+    "process": "^0.11.10"
   },
   "devDependencies": {
     "@rollup/plugin-node-resolve": "^15.2.3",
