@@ -13,10 +13,15 @@ if (!fs.existsSync(fsDir)) {
   fs.mkdirSync(fsDir, { recursive: true });
 }
 
-execSync("npm i && npm run build", { cwd: join(__dirname, "../packages/ruby-cli") });
-
 const stubs = await snapshot(join(__dirname, "../src/stubs"));
+fs.writeFileSync(join(fsDir, "stubs"), stubs);
+
+execSync("npm i && npm run build", {
+  cwd: join(__dirname, "../packages/ruby-cli"),
+});
+
 const ruby = await snapshot(join(__dirname, "../packages/ruby-cli/dist"));
 
-fs.writeFileSync("./public/fs/stubs", stubs);
-fs.writeFileSync("./public/fs/ruby", ruby);
+fs.writeFileSync(join(fsDir, "ruby"), ruby);
+
+console.log("Snapshots created successfully.");
