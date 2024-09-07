@@ -31,6 +31,12 @@ Bundler::Worker.prepend(Module.new do
   end
 end)
 
+# ignore activated gems
+require "bundler/runtime"
+Bundler::Runtime.prepend(Module.new do
+  def check_for_activated_spec!(_)
+  end
+end)
 
 require "uri"
 require "bundler/fetcher/compact_index"
