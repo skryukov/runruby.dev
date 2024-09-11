@@ -7,7 +7,6 @@ import {
   Tree,
   TreeApi,
 } from "react-arborist";
-import { Directory } from "@bjorn3/browser_wasi_shim";
 import { nanoid } from "nanoid";
 import {
   VscFileZip,
@@ -17,9 +16,9 @@ import {
 } from "react-icons/vsc";
 import { useStore } from "@nanostores/react";
 
-import { mkdir, rename, rm, writeFile } from "../../engines/wasi/editorFS.ts";
+import { rm } from "../../engines/wasi/editorFS.ts";
 import { Node } from "../Node/Node.tsx";
-import { Entity, idsMap, sortChildren } from "../../fsMap.ts";
+import { Entity } from "../../fsMap.ts";
 import cs from "../Menu/Menu.module.css";
 import {
   $editor,
@@ -31,40 +30,37 @@ import {
 } from "../../stores/editor.ts";
 import { $gist } from "../../stores/gists.ts";
 import { downloadZip } from "../../downloadZip.ts";
+import { webcontainerInstance } from "../../engines/webcontainers";
 
 export const Menu = () => {
   const { treeData, tree } = useStore($editor);
   const currentFilePath = useStore(currentFilePathStore);
 
-  const onRename: RenameHandler<Entity> = ({ name, node }) => {
+  const onRename: RenameHandler<Entity> = async ({ name, node }) => {
     const oldPath = node.data.fullPath;
     const newPath = oldPath.replace(new RegExp(`${node.data.name}$`), name);
 
-    if (rename(oldPath, newPath)) {
-      refreshTreeData();
-
-      setTimeout(() => {
-        $editorVersion.set($editorVersion.get() + 1);
-      }, 20);
-    }
+    await webcontainerInstance?.fs?.rename(oldPath, newPath);
+    // TODO check if needed
+    $editorVersion.set($editorVersion.get() + 1);
   };
 
-  const onCreate: CreateHandler<Entity> = ({ parentNode, type }) => {
+  const onCreate: CreateHandler<Entity> = async ({ parentNode, type }) => {
     const name =
       type === "leaf" ? `new_file_${Date.now()}.rb` : `new_dir_${Date.now()}`;
     const path = `${parentNode ? parentNode.data.fullPath : ""}/${name}`;
-    const object = type === "leaf" ? writeFile(path, "") : mkdir(path);
-
-    if (!object) {
-      throw new Error(
-        `Failed creating ${type === "leaf" ? "file" : "directory"} in the path: ${path}`,
-      );
+    if (type === "leaf") {
+      await webcontainerInstance?.fs?.writeFile(path, "");
+    } else {
+      await webcontainerInstance?.fs?.mkdir(path);
     }
 
-    const id = nanoid();
-    idsMap.set(object, id);
-    refreshTreeData();
-    return { id, name, object };
+    // const object = (type === "leaf") ? writeFile(path, "") : mkdir(path);
+    //
+    // const id = nanoid();
+    // idsMap.set(object, id);
+    // refreshTreeData();
+    return { id: nanoid(), name, object: null };
   };
 
   const onDelete: DeleteHandler<Entity> = ({ ids }) => {
@@ -145,18 +141,15 @@ export const Menu = () => {
         width="100%"
         openByDefault={false}
         data={treeData}
-        childrenAccessor={({ object, fullPath }) =>
-          object instanceof Directory ? sortChildren(object, fullPath) : null
-        }
         ref={setTreeRef as never}
         disableDrag={true}
         disableDrop={true}
         onRename={onRename}
         onCreate={onCreate}
         onDelete={onDelete}
-        onActivate={(node: NodeApi) => {
+        onActivate={(node: NodeApi<Entity>) => {
           if (node.isLeaf) {
-            setCurrentNodeId(node.id);
+            setCurrentNodeId(node.data.fullPath);
           }
         }}
       >

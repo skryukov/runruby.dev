@@ -1,26 +1,44 @@
-import { createCors, error, html, json, Router, withCookies } from "itty-router";
-
+import { cors, error, html, json, Router, withCookies } from "itty-router";
 import apiRouter from "./apiRouter";
 import createSession from "./withEncryptedSession";
 import compactIndexSpecs from "./compactIndexSpecs";
 import proxy from "./proxy";
 
+const dynamicOrigins = [
+  /^https:\/\/httpslocalrunrubydev5173-[a-z0-9-]+\.w-corp-staticblitz\.com$/,
+  /^https:\/\/httpslocalhost5173-[a-z0-9-]+\.w-corp-staticblitz\.com$/,
+];
+
 const { withEncryptedSession, setSessionCookie } = createSession();
-const { preflight, corsify } = createCors({
-  methods: ["GET", "PATCH", "POST"],
-  // TODO: use env
-  origins: ["http://localhost:5173", "https://localhost:5173", "https://runruby.dev", "https://local.runruby.dev:5173"],
-  headers: {
-    "Access-Control-Allow-Credentials": "true",
+
+const { preflight, corsify } = cors({
+  allowMethods: ["GET", "PATCH", "POST"],
+  origin: (origin: string) => {
+    const staticOrigins = [
+      "http://localhost:5173",
+      "https://localhost:5173",
+      "https://runruby.dev",
+      "https://local.runruby.dev:5173",
+      "https://local.runruby.dev:5173/",
+    ];
+
+    if (staticOrigins.includes(origin) || dynamicOrigins.some((regex) => regex.test(origin))) {
+      return origin;
+    }
+
+    return;
   },
+  credentials: true,
+  allowHeaders: ["Access-Control-Allow-Credentials", "Access-Control-Allow-Origin"],
 });
 
-const router = Router();
+const router = Router({
+  before: [withCookies, preflight, withEncryptedSession],
+  catch: error,
+  finally: [json, setSessionCookie, corsify],
+});
 
 router
-  .all("*", withCookies)
-  .all("*", preflight)
-  .all("*", withEncryptedSession)
   .all("/api/*", apiRouter.handle)
   .get("/proxy/*", proxy)
   .get("/compact_index_specs", compactIndexSpecs)
@@ -28,6 +46,5 @@ router
   .all("*", () => new Response("Not Found.", { status: 404 }));
 
 export default {
-  fetch: (req: Request, env: Env, ctx: ExecutionContext) =>
-    router.handle(req, env, ctx).then(json).catch(error).then(setSessionCookie).then(corsify),
+  fetch: router.fetch,
 };

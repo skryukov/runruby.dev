@@ -80,7 +80,8 @@ class JS::Connection
     js_response = JS.eval(<<~JS).await
       return fetch('#{proxy_uri(uri)}', {
         method: '#{req.method}',
-        headers: #{req.to_hash.transform_values { _1.join(';') }.to_json},
+        // remove forbidden headers, see: https://github.com/nodejs/undici/issues/1470
+        headers: #{req.to_hash.except("keep-alive", "connection").transform_values { _1.join(';') }.to_json},
         body: #{req.body ? req.body.to_json : 'undefined'}
       })
       .then(response => {
@@ -98,6 +99,10 @@ class JS::Connection
             return {status: response.status, headers: response.headers, text}
           })
         }
+      })
+      .catch(error => {
+        console.error(error)
+        throw error
       })
     JS
 

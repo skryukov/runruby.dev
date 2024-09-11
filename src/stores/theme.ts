@@ -1,4 +1,4 @@
-import { action, atom, onMount } from "nanostores";
+import { atom, onMount } from "nanostores";
 
 export type Theme = "light" | "dark" | "system";
 
@@ -6,11 +6,11 @@ const THEME_KEY = "theme";
 
 export const $theme = atom<Theme>("system");
 
-export const setTheme = action($theme, "set", (store, theme: Theme) => {
+export const setTheme = (theme: Theme) => {
   document.documentElement.setAttribute(THEME_KEY, theme);
-  store.set(theme);
+  $theme.set(theme);
   localStorage.setItem(THEME_KEY, theme);
-});
+};
 
 onMount($theme, () => {
   const url = new URL(window.location.href);
