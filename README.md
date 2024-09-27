@@ -36,5 +36,7 @@ To run project locally:
 1. Run local server:
 
    ```sh
-   npm run dev
+   npm run dev -- --host 0.0.0.0
    ```
+
+open https://local.runruby.dev:5173/

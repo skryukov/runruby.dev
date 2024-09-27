@@ -1,4 +1,4 @@
-import { WASI } from "@bjorn3/browser_wasi_shim";
+import { WASI, wasi as wasiDefs } from "@bjorn3/browser_wasi_shim";
 
 const tracedWasiImports = (wasi: WASI) => {
   for (const key in wasi.wasiImport) {
@@ -21,6 +21,7 @@ export const wasiImports = (wasi: WASI, options?: { debug?: boolean }) => {
   return {
     wasi_snapshot_preview1: {
       ...(options?.debug ? tracedWasiImports(wasi) : wasi.wasiImport),
+      path_filestat_set_times: () => wasiDefs.ERRNO_SUCCESS,
     },
   };
 };
