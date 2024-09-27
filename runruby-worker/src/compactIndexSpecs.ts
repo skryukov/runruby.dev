@@ -54,10 +54,12 @@ export default async (request: IRequest) => {
         return null;
       }
 
-      const lines = (await response.text()).split("\n").slice((maxDepth + 1) * -1, -1);
+      const lines = (await response.text()).split("\n").reverse();
       const gemInfo: GemInfo[] = [];
 
       lines.forEach((line) => {
+        if (gemInfo.length >= maxDepth) return;
+
         const parts = line.split("|");
         if (parts.length < 2) return;
 
