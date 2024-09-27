@@ -14,6 +14,7 @@ end)
 
 ENV["BUNDLE_SSL_VERIFY_MODE"] = "0"
 ENV["BUNDLE_SILENCE_ROOT_WARNING"] = "1"
+ENV["BUNDLE_PATH"] = "./gems"
 
 require "bundler"
 
@@ -37,6 +38,18 @@ Bundler::Runtime.prepend(Module.new do
   def check_for_activated_spec!(_)
   end
 end)
+
+# support locked Bundlers
+class Bundler::SelfManager
+  def restart_with(version)
+    ENV["BUNDLER_VERSION"] = version.to_s
+    begin
+      Bundler::CLI::Install.new({}).run
+    rescue StandardError => e
+      $stderr << e.message << "\n" << e.backtrace.join("\n")
+     end
+  end
+end
 
 require "uri"
 require "bundler/fetcher/compact_index"

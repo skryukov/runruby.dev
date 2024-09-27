@@ -81,7 +81,7 @@ export const Editor = ({ loading: VMRunning, runVM }: EditorProps) => {
     require "bundler/cli"
     require "bundler/cli/install"
     begin
-      Bundler::CLI::Install.new({path: './gems'}).run
+      Bundler::CLI::Install.new({}).run
     rescue StandardError => e
       $stderr << e.message << "\\n" << e.backtrace.join("\\n")
     end
